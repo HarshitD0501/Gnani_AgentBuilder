@@ -14,8 +14,8 @@ export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 
 export const metadata = {
-  title: 'Aanya — Human help desk',
-  description: 'Open requests where Aanya asked a human to take over.',
+  title: 'Sahayika — Human help desk',
+  description: 'Open requests where Sahayika asked a human to take over.',
 };
 
 interface HelpDeskPageProps {
@@ -69,7 +69,7 @@ function RequestCard({ escalation }: { escalation: Escalation }) {
           value={`${escalation.caller_name} (${escalation.phone_number || 'no number shared'})`}
         />
         <Field label="What happened" value={escalation.what_happened} />
-        <Field label="What Aanya already did" value={escalation.already_checked} />
+        <Field label="What Sahayika already did" value={escalation.already_checked} />
         <Separator />
         <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
           <Field label="Language" value={escalation.language} />
@@ -95,10 +95,10 @@ function HelpDeskNav() {
         <Link
           href="/"
           className="group flex items-center gap-3 rounded-xl focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-violet-600"
-          aria-label="Aanya home"
+          aria-label="Sahayika home"
         >
           <BrandMark className="transition-transform duration-300 group-hover:scale-105 group-hover:-rotate-3" />
-          <span className="text-xl font-bold tracking-[-0.03em] text-[#111a2e]">Aanya</span>
+          <span className="text-xl font-bold tracking-[-0.03em] text-[#111a2e]">Sahayika</span>
         </Link>
 
         <nav aria-label="Dashboard navigation" className="flex items-center gap-3 sm:gap-6">
@@ -109,7 +109,7 @@ function HelpDeskNav() {
             Analytics 📊
           </Link>
           <Link href="/" className="aanya-primary-button h-11 rounded-full px-5 text-sm font-semibold">
-            Back to Aanya
+            Back to Sahayika
           </Link>
         </nav>
       </div>

@@ -488,6 +488,14 @@ export const WelcomeView = ({
                   </button>
                 </Magnet>
                 <a
+                  href="tel:112"
+                  className="inline-flex h-14 items-center justify-center gap-2 rounded-full border border-rose-200 bg-rose-50/90 px-6 text-base font-semibold text-rose-700 shadow-sm backdrop-blur transition-all hover:-translate-y-0.5 hover:bg-rose-100 hover:border-rose-300 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-rose-600"
+                  title="National Emergency Response Support System (ERSS) India"
+                >
+                  <span className="size-2 rounded-full bg-rose-600 animate-pulse" />
+                  Emergency: 112
+                </a>
+                <a
                   href="#about"
                   className="inline-flex h-14 items-center justify-center rounded-full border border-slate-300 bg-white/80 px-7 text-base font-semibold text-[#111a2e] shadow-sm backdrop-blur transition-all hover:-translate-y-0.5 hover:border-slate-400 hover:bg-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-violet-600 motion-reduce:transform-none"
                 >

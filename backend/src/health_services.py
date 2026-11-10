@@ -12,13 +12,16 @@ from typing import Any, Optional
 
 logger = logging.getLogger("agent.health_services")
 
-# Dataset freshness timestamp
-DATA_SOURCE_ATTRIBUTION = (
-    "OpenStreetMap Live Directory & National Health Registry (Updated 2026)"
-)
+# Dataset freshness timestamp and truthful attribution
+DATA_SOURCE_ATTRIBUTION = "OpenStreetMap (Nominatim community data)"
 
 # Emergency & Specialized Helplines
 EMERGENCY_HELPLINES: dict[str, dict[str, str]] = {
+    "erss": {
+        "name": "National Emergency Response Support System (ERSS)",
+        "number": "112",
+        "description": "Unified 24/7 national emergency response for immediate police, fire, and medical assistance.",
+    },
     "ambulance": {
         "name": "National Ambulance Emergency Service",
         "number": "108",
@@ -56,11 +59,11 @@ def fetch_live_openstreetmap_hospitals(
 
     for q in queries_to_try:
         try:
-            url = f"https://nominatim.openstreetmap.org/search?q={urllib.parse.quote(q)}&format=json&addressdetails=1&limit=5"
+            url = f"https://nominatim.openstreetmap.org/search?q={urllib.parse.quote(q)}&format=json&addressdetails=1&extratags=1&limit=5"
             req = urllib.request.Request(
                 url,
                 headers={
-                    "User-Agent": "VoiceForBharatHealthAgent/1.0 (Health Access Track Voice Agent)"
+                    "User-Agent": "SahayikaVoiceHealthCompanion/1.0 (Health Access Companion; contact: support@sahayika.local)"
                 },
             )
             with urllib.request.urlopen(req, timeout=timeout) as response:
@@ -77,17 +80,21 @@ def fetch_live_openstreetmap_hospitals(
                             else f"Hospital in {location.title()}"
                         )
                         postcode = item.get("address", {}).get("postcode", "")
+                        extratags = item.get("extratags") if isinstance(item.get("extratags"), dict) else {}
+                        emergency_tag = extratags.get("emergency") == "yes"
+                        raw_hours = extratags.get("opening_hours")
+                        operating_hours = raw_hours if raw_hours else "Hours unverified; confirm with facility before visiting"
                         if name:
                             live_results.append(
                                 {
                                     "district": location.lower(),
                                     "pincode": postcode,
                                     "name": name,
-                                    "facility_type": "Hospital / Public Authorized Health Center (Live OpenStreetMap)",
+                                    "facility_type": "Hospital / Healthcare Facility (OpenStreetMap community data)",
                                     "address": display_name,
-                                    "contact_phone": "Call 108 Emergency / Local Helpline 104",
-                                    "emergency_services": True,
-                                    "operating_hours": "24/7 Emergency & OPD",
+                                    "contact_phone": "Call 112 / 108 for Emergency or 104 for Health Info",
+                                    "emergency_services": emergency_tag,
+                                    "operating_hours": operating_hours,
                                 }
                             )
                     if live_results:
@@ -106,18 +113,18 @@ def search_health_facilities(
 ) -> dict[str, Any]:
     """
     Search for nearest primary health centers or hospitals by location name or pincode.
-    Fetches real-time live data directly from OpenStreetMap Free API.
+    Fetches real-time live data directly from OpenStreetMap Free API (Nominatim).
     """
     if simulated_failure:
         logger.error(
-            "Simulated network timeout connecting to National Health Registry API."
+            "Simulated network timeout connecting to OpenStreetMap Nominatim API."
         )
         return {
             "status": "error",
-            "message": "Health registry service is currently unreachable due to network timeout.",
+            "message": "Health facility lookup is currently unreachable due to network timeout.",
             "data_source": DATA_SOURCE_ATTRIBUTION,
             "fallback_recommendation": (
-                "For urgent medical assistance, please call 108 Emergency Ambulance immediately "
+                "For urgent medical assistance, please call 112 ERSS or 108 Emergency Ambulance immediately "
                 "or visit your nearest district civil hospital."
             ),
         }
@@ -168,7 +175,9 @@ def search_health_facilities(
 def get_emergency_helpline(category: str = "general") -> dict[str, Any]:
     """Retrieve official government emergency or specialized helpline information."""
     key = category.strip().lower()
-    if "mental" in key or "mind" in key or "stress" in key:
+    if "112" in key or "erss" in key:
+        info = EMERGENCY_HELPLINES["erss"]
+    elif "mental" in key or "mind" in key or "stress" in key:
         info = EMERGENCY_HELPLINES["mental_health"]
     elif "maternal" in key or "child" in key or "baby" in key or "pregnant" in key:
         info = EMERGENCY_HELPLINES["maternal"]

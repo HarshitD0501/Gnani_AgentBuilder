@@ -136,3 +136,31 @@ def list_appointments(
     ).fetchall()
     conn.close()
     return [_row_to_appointment(row) for row in rows]
+
+
+def list_appointments_for_caller(
+    caller_phone: str = "",
+    caller_name: str = "",
+    limit: int = 20,
+    db_path: Optional[Path] = None,
+) -> list[dict[str, Any]]:
+    """List appointments strictly filtered by caller phone or name to isolate user sessions."""
+    phone = (caller_phone or "").strip()
+    name = (caller_name or "").strip()
+    if not phone and not name:
+        return []
+
+    db.init_db(db_path)
+    conn = db.get_connection(db_path)
+    if phone:
+        rows = conn.execute(
+            "SELECT * FROM clinic_appointments WHERE phone_number = ? ORDER BY appointment_id DESC LIMIT ?",
+            (phone, limit),
+        ).fetchall()
+    else:
+        rows = conn.execute(
+            "SELECT * FROM clinic_appointments WHERE caller_name = ? ORDER BY appointment_id DESC LIMIT ?",
+            (name, limit),
+        ).fetchall()
+    conn.close()
+    return [_row_to_appointment(row) for row in rows]

@@ -1,3 +1,4 @@
+import { randomUUID } from 'crypto';
 import { NextResponse } from 'next/server';
 import { AccessToken, type AccessTokenOptions, type VideoGrant } from 'livekit-server-sdk';
 import { RoomConfiguration } from '@livekit/protocol';
@@ -30,24 +31,23 @@ export async function POST(req: Request) {
       throw new Error('LIVEKIT_API_SECRET is not defined');
     }
 
-    // Parse room config from request body (if provided).
     const body = await req.json().catch(() => ({}));
-    let roomConfig: RoomConfiguration | undefined;
-    if (body?.room_config) {
-      roomConfig = RoomConfiguration.fromJson(body.room_config, { ignoreUnknownFields: true });
-    } else if (AGENT_NAME) {
-      // When AGENT_NAME is set, configure explicit agent dispatch so the named
-      // agent worker picks up the job when a user joins the room.
-      roomConfig = RoomConfiguration.fromJson(
-        { agents: [{ agentName: AGENT_NAME }] },
-        { ignoreUnknownFields: true }
-      );
-    }
-      
-    // Generate participant token
-    const participantName = body?.name || body?.participantName || 'user';
-    const participantIdentity = body?.identity || body?.phone || body?.user_id || body?.name || 'default_voice_user';
-    const roomName = body?.roomName || `voice_assistant_room_${Math.floor(Math.random() * 10_000)}`;
+
+    // Server-side identity isolation: prevent spoofing and unauthorized cross-room hijacking.
+    // Client-supplied identities and arbitrary roomConfigs are ignored to guarantee session security.
+    const sessionSuffix = randomUUID().replace(/-/g, '').slice(0, 10);
+    const participantIdentity = `user_${sessionSuffix}`;
+    const participantName =
+      typeof body?.name === 'string' && body.name.trim().length > 0
+        ? body.name.trim().slice(0, 32)
+        : 'Guest';
+    const roomName = `sahayika_room_${sessionSuffix}`;
+
+    // Strictly enforce authorized agent dispatch to Sahayika
+    const roomConfig = RoomConfiguration.fromJson(
+      { agents: [{ agentName: AGENT_NAME }] },
+      { ignoreUnknownFields: true }
+    );
 
     const participantToken = await createParticipantToken(
       { identity: participantIdentity, name: participantName },
