@@ -6,11 +6,16 @@ and provides emergency helplines and offline failure handling.
 
 import json
 import logging
+import time
 import urllib.parse
 import urllib.request
 from typing import Any, Optional
 
 logger = logging.getLogger("agent.health_services")
+
+# In-memory bounded cache for OSM lookups (respects Nominatim policy & eliminates repeat latency)
+_FACILITY_CACHE: dict[str, tuple[float, list[dict[str, Any]]]] = {}
+_CACHE_TTL_SEC: float = 600.0  # 10 minutes cache TTL
 
 # Dataset freshness timestamp and truthful attribution
 DATA_SOURCE_ATTRIBUTION = "OpenStreetMap (Nominatim community data)"
@@ -49,6 +54,14 @@ def fetch_live_openstreetmap_hospitals(
     location: str, timeout: float = 3.5
 ) -> list[dict[str, Any]]:
     """Fetch live real-world hospitals directly from OpenStreetMap Nominatim Free API."""
+    cache_key = location.lower().strip()
+    now = time.time()
+    if cache_key in _FACILITY_CACHE:
+        cached_time, cached_results = _FACILITY_CACHE[cache_key]
+        if now - cached_time < _CACHE_TTL_SEC:
+            logger.info(f"Serving OSM hospital results from in-memory cache for '{cache_key}' (0ms network delay).")
+            return cached_results
+
     queries_to_try = [
         f"hospitals in {location}",
         f"hospitals near {location}",
@@ -98,6 +111,7 @@ def fetch_live_openstreetmap_hospitals(
                                 }
                             )
                     if live_results:
+                        _FACILITY_CACHE[cache_key] = (now, live_results)
                         return live_results
         except Exception as e:
             logger.warning(

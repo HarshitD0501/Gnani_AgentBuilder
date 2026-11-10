@@ -34,6 +34,7 @@ import escalations
 import health_services
 import reminders
 import safety
+from telemetry import telemetry_tracker
 from voice_providers import (
     build_gnani_stt,
     build_gnani_tts,
@@ -512,6 +513,10 @@ class HealthAgentBase(Agent):
                     )
                 break
 
+        turn_id = f"turn_{int(time.time() * 1000)}"
+        metrics = telemetry_tracker.start_turn(turn_id)
+        metrics.transcript_received_at = time.time()
+
         def _interrupt_active_speech():
             try:
                 activity = getattr(self, "_activity", None)
@@ -522,7 +527,12 @@ class HealthAgentBase(Agent):
 
         if last_user_text:
             triage = safety.evaluate_emergency(last_user_text)
+            metrics.decision_completed_at = time.time()
             if triage.is_emergency:
+                metrics.is_emergency = True
+                metrics.is_short_circuit = True
+                metrics.tts_first_chunk_at = time.time()
+                telemetry_tracker.complete_turn(turn_id)
                 logger.warning(
                     f"Deterministic safety gate intercepted [{triage.category}]: {triage.reason}. Bypassing LLM."
                 )
@@ -532,17 +542,34 @@ class HealthAgentBase(Agent):
 
             violated, boundary_msg = safety.check_medical_boundary(last_user_text)
             if violated and boundary_msg:
+                metrics.is_boundary = True
+                metrics.is_short_circuit = True
+                metrics.tts_first_chunk_at = time.time()
+                telemetry_tracker.complete_turn(turn_id)
                 logger.info(
                     "Deterministic safety gate matched medical boundary request. Bypassing LLM."
                 )
                 _interrupt_active_speech()
                 yield boundary_msg
                 return
+        else:
+            metrics.decision_completed_at = time.time()
 
-        async for chunk in Agent.default.llm_node(
-            self, chat_ctx, tools, model_settings
-        ):
-            yield chunk
+        metrics.llm_start_at = time.time()
+        first_chunk = True
+        try:
+            async for chunk in Agent.default.llm_node(
+                self, chat_ctx, tools, model_settings
+            ):
+                if first_chunk:
+                    now = time.time()
+                    metrics.llm_first_token_at = now
+                    metrics.tts_first_chunk_at = now
+                    first_chunk = False
+                yield chunk
+        finally:
+            metrics.llm_completed_at = time.time()
+            telemetry_tracker.complete_turn(turn_id)
 
     @function_tool
     async def end_call(self, context: RunContext) -> str:
@@ -575,8 +602,17 @@ class Assistant(HealthAgentBase):
         self,
         instructions: str = SYSTEM_PROMPT,
         chat_ctx: Optional[ChatContext] = None,
+        min_endpointing_delay: float = 0.5,
+        max_endpointing_delay: float = 1.5,
+        allow_interruptions: bool = True,
     ) -> None:
-        super().__init__(instructions=instructions, chat_ctx=chat_ctx)
+        super().__init__(
+            instructions=instructions,
+            chat_ctx=chat_ctx,
+            min_endpointing_delay=min_endpointing_delay,
+            max_endpointing_delay=max_endpointing_delay,
+            allow_interruptions=allow_interruptions,
+        )
 
     @function_tool
     async def lookup_caller(self, context: RunContext, user_id_or_name: str) -> str:
@@ -586,7 +622,7 @@ class Assistant(HealthAgentBase):
             user_id_or_name: Name or ID of the caller (e.g., 'Ramesh', 'Aman')
         """
         logger.info(f"Looking up memory for caller: {user_id_or_name}")
-        record = db.get_caller_memory(user_id_or_name)
+        record = await asyncio.to_thread(db.get_caller_memory, user_id_or_name)
         if not record:
             return f"No saved memory found for caller '{user_id_or_name}'."
 
@@ -651,7 +687,8 @@ class Assistant(HealthAgentBase):
         }
         facts = {k: v for k, v in facts.items() if v}
 
-        success = db.save_caller_memory(
+        success = await asyncio.to_thread(
+            db.save_caller_memory,
             user_id=user_id,
             name=name,
             phone_number=phone_number,
@@ -671,7 +708,7 @@ class Assistant(HealthAgentBase):
         Args:
             user_id_or_name: Name or user ID of the caller to delete.
         """
-        success = db.delete_caller_memory(user_id_or_name)
+        success = await asyncio.to_thread(db.delete_caller_memory, user_id_or_name)
         if success:
             return f"Successfully deleted caller memory for '{user_id_or_name}'."
         return f"No memory record found to delete for '{user_id_or_name}'."
@@ -1026,7 +1063,9 @@ class Assistant(HealthAgentBase):
         """
         logger.info(f"Looking up emergency helpline for category='{category}'")
         try:
-            result = health_services.get_emergency_helpline(category=category)
+            result = await asyncio.to_thread(
+                health_services.get_emergency_helpline, category=category
+            )
             return json.dumps(result, ensure_ascii=False)
         except Exception as e:
             logger.error(f"Error looking up helpline: {e}")
@@ -1127,7 +1166,8 @@ class ClinicAppointmentSpecialist(HealthAgentBase):
             f"Looking up health facility for location='{location}', facility_type='{facility_type}'"
         )
         try:
-            result = health_services.search_health_facilities(
+            result = await asyncio.to_thread(
+                health_services.search_health_facilities,
                 location_or_pincode=location,
                 facility_type=facility_type,
                 simulated_failure=simulated_failure,
@@ -1138,10 +1178,10 @@ class ClinicAppointmentSpecialist(HealthAgentBase):
             return json.dumps(
                 {
                     "status": "error",
-                    "message": "Live health registry lookup service timed out.",
+                    "message": "Live health facility directory lookup service timed out.",
                     "data_source": health_services.DATA_SOURCE_ATTRIBUTION,
                     "fallback_recommendation": (
-                        "Please dial 108 for emergency ambulance support or visit your nearest district civil hospital."
+                        "Please dial 112 ERSS or 108 emergency ambulance support or visit your nearest district civil hospital."
                     ),
                 },
                 ensure_ascii=False,
@@ -1178,7 +1218,9 @@ class ClinicAppointmentSpecialist(HealthAgentBase):
         number = _normalize_phone_e164(phone_number or userdata.get("phone_number", ""))
 
         # Fall back to saved caller memory
-        record = db.get_caller_memory(name or userdata.get("phone_number", "") or "")
+        record = await asyncio.to_thread(
+            db.get_caller_memory, name or userdata.get("phone_number", "") or ""
+        )
         if record:
             name = name or (record.get("name") or "")
             number = number or _normalize_phone_e164(record.get("phone_number", ""))
@@ -1193,7 +1235,8 @@ class ClinicAppointmentSpecialist(HealthAgentBase):
             "English" if (language or "").strip().lower().startswith("en") else "Hindi"
         )
 
-        row = appointments.book_appointment(
+        row = await asyncio.to_thread(
+            appointments.book_appointment,
             caller_name=name,
             phone_number=number,
             clinic_name=clinic_name,
@@ -1222,9 +1265,13 @@ class ClinicAppointmentSpecialist(HealthAgentBase):
             userdata = context.session.userdata or {}
         phone = userdata.get("phone_number", "")
         if phone:
-            rows = appointments.list_appointments_for_caller(caller_phone=phone, limit=limit)
+            rows = await asyncio.to_thread(
+                appointments.list_appointments_for_caller, caller_phone=phone, limit=limit
+            )
         else:
-            rows = appointments.list_appointments(limit=limit)
+            rows = await asyncio.to_thread(
+                appointments.list_appointments, limit=limit
+            )
         if not rows:
             return "No clinic appointments found."
         items = [
@@ -1240,7 +1287,7 @@ class ClinicAppointmentSpecialist(HealthAgentBase):
         assistant = Assistant(chat_ctx=self.chat_ctx.copy(exclude_instructions=True))
         return (
             assistant,
-            "Transferring back to Aanya Health Advisor. Aanya will now continue assisting with health questions and advice.",
+            "Transferring back to Sahayika. Sahayika will now continue assisting with health questions and advice.",
         )
 
 

@@ -4,6 +4,9 @@ Verifies red-flag detection across Hindi, English, and Roman Hindi,
 negation filtering, educational exemption, and medical boundary enforcement.
 """
 
+import pytest
+from livekit.agents import ChatContext
+
 from safety import (
     CURATED_HEALTH_TOPICS,
     DETERMINISTIC_EMERGENCY_GUIDANCE,
@@ -129,10 +132,6 @@ def test_curated_health_topics_attribution():
     assert "source" in CURATED_HEALTH_TOPICS["hydration"]
     assert "routine_vaccination" in CURATED_HEALTH_TOPICS
     assert "NHM" in CURATED_HEALTH_TOPICS["routine_vaccination"]["source"]
-
-
-import pytest
-from livekit.agents import ChatContext
 
 
 @pytest.mark.asyncio
