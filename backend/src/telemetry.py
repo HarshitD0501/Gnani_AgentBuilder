@@ -1,5 +1,5 @@
 """
-Turn-Level Latency & Pipeline Telemetry Module for Sahayika.
+Turn-Level Latency & Pipeline Telemetry Module for Aanya.
 
 Instruments speech-end, transcript-final, deterministic decision, LLM first token/completion,
 and TTS first audio metrics without logging or retaining sensitive user transcripts or PII.

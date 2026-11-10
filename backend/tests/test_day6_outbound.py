@@ -557,7 +557,7 @@ def test_english_opening_states_who_why_and_optout():
             "language_preference": "English",
         }
     )
-    assert "Sahayika" in opening or "Aanya" in opening
+    assert "Aanya" in opening
     assert "health reminder service" in opening
     assert "Metformin" in opening
     assert "stop the reminders" in opening

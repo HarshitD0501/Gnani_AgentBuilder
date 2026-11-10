@@ -74,7 +74,7 @@ export function ViewController({ appConfig }: ViewControllerProps) {
           key="session-view"
           {...VIEW_MOTION_PROPS}
           isConnecting={!isConnected}
-          preConnectMessage="Sahayika is listening — ask a health question"
+          preConnectMessage="Aanya is listening — ask a health question"
           supportsChatInput={appConfig.supportsChatInput}
           supportsVideoInput={appConfig.supportsVideoInput}
           supportsScreenShare={appConfig.supportsScreenShare}

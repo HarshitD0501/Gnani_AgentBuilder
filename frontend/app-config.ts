@@ -30,10 +30,10 @@ export interface AppConfig {
 }
 
 export const APP_CONFIG_DEFAULTS: AppConfig = {
-  companyName: 'Sahayika',
-  pageTitle: 'Sahayika — Multilingual Voice AI Health Companion',
+  companyName: 'Aanya',
+  pageTitle: 'Aanya — Multilingual Voice AI Health Companion',
   pageDescription:
-    'Sahayika is a real-time conversational voice AI health companion powered by Gnani Prisma STT, Gnani Timbre TTS, and LiveKit.',
+    'Aanya is a real-time conversational voice AI health companion powered by Gnani Prisma STT, Gnani Timbre TTS, and LiveKit.',
 
   supportsChatInput: true,
   supportsVideoInput: false,
@@ -51,6 +51,6 @@ export const APP_CONFIG_DEFAULTS: AppConfig = {
   audioVisualizerColorDark: '#6347EE',
   audioVisualizerColorShift: 0.45,
 
-  agentName: process.env.AGENT_NAME ?? 'Sahayika',
+  agentName: process.env.AGENT_NAME ?? 'Aanya',
   sandboxId: undefined,
 };

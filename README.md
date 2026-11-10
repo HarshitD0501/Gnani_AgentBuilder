@@ -1,4 +1,4 @@
-# Sahayika — Enterprise Multilingual Voice AI Health Companion
+# Aanya — Enterprise Multilingual Voice AI Health Companion
 
 [![Python](https://img.shields.io/badge/Python-3.12%2B-blue?logo=python&logoColor=white)](pyproject.toml)
 [![LiveKit](https://img.shields.io/badge/LiveKit_Agents-~1.8-002B49?logo=livekit&logoColor=white)](https://livekit.io)
@@ -16,9 +16,9 @@
 
 ## 📌 Executive Summary
 
-**Sahayika** (सहायिका) is an enterprise-grade, real-time multilingual voice AI healthcare companion designed for high-availability patient guidance across India. Built on top of **Gnani.ai Prisma STT**, **Gnani.ai Timbre TTS**, **LiveKit WebRTC Agents**, and **Google Gemini 2.5 Flash**, Sahayika delivers responsive, human-like voice conversations in **Hindi, Indian English, and Hinglish**.
+**Aanya** (आन्या) is an enterprise-grade, real-time multilingual voice AI healthcare companion designed for high-availability patient guidance across India. Built on top of **Gnani.ai Prisma STT**, **Gnani.ai Timbre TTS**, **LiveKit WebRTC Agents**, and **Google Gemini 2.5 Flash**, Aanya delivers responsive, human-like voice conversations in **Hindi, Indian English, and Hinglish**.
 
-Unlike generic LLM wrappers, Sahayika implements a **deterministic pre-LLM safety architecture**: critical emergency symptoms (cardiac events, acute respiratory distress, stroke signs, severe hemorrhage, unconsciousness) are intercepted instantly before LLM execution, immediately terminating stale audio and providing emergency instructions directing callers to India's **National Emergency Response Support System (112 ERSS)** and **108 Ambulance Services**.
+Unlike generic LLM wrappers, Aanya implements a **deterministic pre-LLM safety architecture**: critical emergency symptoms (cardiac events, acute respiratory distress, stroke signs, severe hemorrhage, unconsciousness) are intercepted instantly before LLM execution, immediately terminating stale audio and providing emergency instructions directing callers to India's **National Emergency Response Support System (112 ERSS)** and **108 Ambulance Services**.
 
 ---
 
@@ -78,7 +78,7 @@ flowchart TD
 | **Unicode Negation Safety** | Distinguishes affirmative complaints from negated statements (e.g., `सीने में दर्द नहीं है` vs `सीने में दर्द है`). | Contextual token window evaluation preserving Devanagari matras and Hindi negation markers (`नहीं`, `ना`, `no`, `not`). |
 | **Medical Scope Limit** | Prohibits prescribing medications, altering dosages, or issuing clinical diagnostic verdicts. | System prompt boundary combined with tool refusal logic directing users to licensed clinicians. |
 | **Truthful Outcomes** | No false claims of hospital integration or automated ambulance dispatch. | Phrased accurately as local personal visit reminders and verified public health center lookup via OpenStreetMap. |
-| **Identity & Data Isolation** | Eliminates cross-session memory leakage. Prevents unauthorized data access. | Server-side UUID generation (`user_<UUID>` / `sahayika_room_<UUID>`). Endpoint authorization validation. |
+| **Identity & Data Isolation** | Eliminates cross-session memory leakage. Prevents unauthorized data access. | Server-side UUID generation (`user_<UUID>` / `aanya_room_<UUID>`). Endpoint authorization validation. |
 
 ---
 
@@ -101,10 +101,10 @@ Telemetry tracking via high-resolution monotonic timestamps (`time.perf_counter`
 ## 📂 Repository Structure
 
 ```
-Sahayika/
+Aanya/
 ├── backend/
 │   ├── src/
-│   │   ├── agent.py               # LiveKit worker, Sahayika companion persona & pipeline orchestration
+│   │   ├── agent.py               # LiveKit worker, Aanya companion persona & pipeline orchestration
 │   │   ├── voice_providers.py     # Gnani Prisma STT & Gnani Timbre TTS streaming factories
 │   │   ├── safety.py              # Multilingual red-flag triage & Unicode negation parser
 │   │   ├── telemetry.py           # Real-time turn latency metrics (TTFT, TTFA, monotonic tracking)
@@ -125,7 +125,7 @@ Sahayika/
 │   │   ├── help-desk/page.tsx     # Gated coordinator review portal for escalated cases
 │   │   └── api/token/route.ts     # Secure server-generated LiveKit participant token endpoint
 │   ├── components/                # Real-time audio visualizers, control bar, and emergency dials
-│   ├── app-config.ts              # Sahayika application branding and voice configurations
+│   ├── app-config.ts              # Aanya application branding and voice configurations
 │   ├── package.json               # Next.js 15 dependencies
 │   └── pnpm-lock.yaml             # Pinned frontend lockfile
 ├── docs/
@@ -160,7 +160,7 @@ GEMINI_API_KEY=your_gemini_api_key_here
 LIVEKIT_URL=wss://your-project.livekit.cloud
 LIVEKIT_API_KEY=your_livekit_key
 LIVEKIT_API_SECRET=your_livekit_secret
-LIVEKIT_AGENT_NAME=Sahayika
+LIVEKIT_AGENT_NAME=Aanya
 
 # Application Settings
 DEMO_MODE=true
@@ -194,7 +194,7 @@ pnpm dev
 pnpm build
 pnpm start
 ```
-Navigate to `http://localhost:3000` to interact with **Sahayika** directly via your browser's microphone.
+Navigate to `http://localhost:3000` to interact with **Aanya** directly via your browser's microphone.
 
 ---
 

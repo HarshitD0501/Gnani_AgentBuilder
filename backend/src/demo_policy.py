@@ -1,5 +1,5 @@
 """
-demo_policy.py - Privacy Boundaries & Staging Demo Isolation for Sahayika.
+demo_policy.py - Privacy Boundaries & Staging Demo Isolation for Aanya.
 
 Provides strict privacy controls and staging isolation:
 1. Synthetic data separation - Prevents pollution of production data.

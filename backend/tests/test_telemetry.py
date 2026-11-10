@@ -1,5 +1,5 @@
 """
-Unit Tests for Telemetry and Pipeline Timing Module (Sahayika).
+Unit Tests for Telemetry and Pipeline Timing Module (Aanya).
 Verifies metrics collection, calculation of TTFT, TTFA, STT delay,
 percentiles, and privacy safety (no transcript or PII retention).
 """

@@ -1,5 +1,5 @@
 """
-conftest.py - Pytest fixtures and test isolation for Sahayika.
+conftest.py - Pytest fixtures and test isolation for Aanya.
 
 Guarantees:
 - Default test suite makes ZERO live calls to external LLMs/providers or networks.

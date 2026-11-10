@@ -1,8 +1,8 @@
-# Sahayika — Phase 1 Baseline & Test Isolation Report
+# Aanya — Phase 1 Baseline & Test Isolation Report
 
 **Date:** 10 November 2026, Asia/Kolkata  
-**Project:** Sahayika — Multilingual Voice AI Health Companion  
-**Repository:** `C:\Users\harsh\Desktop\Gnani\Sahayika`  
+**Project:** Aanya — Multilingual Voice AI Health Companion  
+**Repository:** `C:\Users\harsh\Desktop\Gnani\Aanya-AI-Health-Agent`  
 **Remote:** `https://github.com/HarshitD0501/Sahayika.git`  
 **Status:** PHASE 1 COMPLETE — Baseline verified, dependencies isolated, test suite guarded.
 

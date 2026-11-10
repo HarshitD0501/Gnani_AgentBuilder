@@ -1,5 +1,5 @@
 """
-Unit Tests for Deterministic Safety, Triage and Medical Boundaries (Sahayika).
+Unit Tests for Deterministic Safety, Triage and Medical Boundaries (Aanya).
 Verifies red-flag detection across Hindi, English, and Roman Hindi,
 negation filtering, educational exemption, and medical boundary enforcement.
 """

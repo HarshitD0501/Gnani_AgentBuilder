@@ -34,7 +34,7 @@ const FEATURES = [
   {
     icon: 'clarity',
     title: 'Find a clearer next step',
-    description: 'Sahayika turns a spoken question into an approachable conversation you can follow.',
+    description: 'Aanya turns a spoken question into an approachable conversation you can follow.',
   },
   {
     icon: 'voice',
@@ -59,30 +59,30 @@ const STEPS = [
   {
     number: '03',
     title: 'Hear a clear response',
-    description: 'Sahayika replies by voice so the conversation stays simple and easy to follow.',
+    description: 'Aanya replies by voice so the conversation stays simple and easy to follow.',
   },
 ] as const;
 
 const FAQS = [
   {
-    question: 'What can I ask Sahayika?',
+    question: 'What can I ask Aanya?',
     answer:
-      'You can ask general health and wellness questions or use Sahayika as a calm starting point for understanding what to do next. Sahayika does not diagnose conditions or replace a qualified clinician.',
+      'You can ask general health and wellness questions or use Aanya as a calm starting point for understanding what to do next. Aanya does not diagnose conditions or replace a qualified clinician.',
   },
   {
-    question: 'Is Sahayika an emergency service?',
+    question: 'Is Aanya an emergency service?',
     answer:
       'No. If you or someone else may be in immediate danger, contact your local emergency services (112 / 108 in India) right away. Do not wait for a voice-agent response.',
   },
   {
     question: 'How does the voice conversation begin?',
     answer:
-      'Select any Get started button, then approve microphone access. The existing LiveKit session will connect and Sahayika will be ready to listen.',
+      'Select any Get started button, then approve microphone access. The existing LiveKit session will connect and Aanya will be ready to listen.',
   },
   {
-    question: 'What technology powers Sahayika?',
+    question: 'What technology powers Aanya?',
     answer:
-      'Sahayika is powered by Gnani.ai Prisma STT for speech recognition, Gnani Timbre TTS for natural Indic voice synthesis, and LiveKit WebRTC for real-time streaming.',
+      'Aanya is powered by Gnani.ai Prisma STT for speech recognition, Gnani Timbre TTS for natural Indic voice synthesis, and LiveKit WebRTC for real-time streaming.',
   },
 ] as const;
 
@@ -236,7 +236,7 @@ export const WelcomeView = ({
     } catch {
       setIsStarting(false);
       setStartError(
-        'Sahayika could not start the voice session. Please check your connection and try again.'
+        'Aanya could not start the voice session. Please check your connection and try again.'
       );
     }
   }, [isStarting, onStartCall]);
@@ -275,10 +275,10 @@ export const WelcomeView = ({
           <a
             href="#home"
             className="group flex items-center gap-3 rounded-xl focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-violet-600"
-            aria-label="Sahayika home"
+            aria-label="Aanya home"
           >
             <BrandMark className="transition-transform duration-300 group-hover:scale-105 group-hover:-rotate-3" />
-            <span className="text-xl font-bold tracking-[-0.03em] text-[#111a2e]">Sahayika</span>
+            <span className="text-xl font-bold tracking-[-0.03em] text-[#111a2e]">Aanya</span>
           </a>
 
           <nav aria-label="Primary navigation" className="hidden items-center gap-9 md:flex">
@@ -423,7 +423,7 @@ export const WelcomeView = ({
                     }}
                     className="aanya-hero-name inline-block"
                   >
-                    Sahayika.
+                    Aanya.
                   </motion.span>
                 </span>
                 <span
@@ -533,14 +533,14 @@ export const WelcomeView = ({
               <div className="aanya-voice-stage relative aspect-[1/1.05] overflow-hidden rounded-[40px] border border-white/90 bg-white/65 shadow-[0_40px_120px_-42px_rgba(65,51,140,0.4)] backdrop-blur-xl">
                 <img
                   src="/aanya-advisor.jpg"
-                  alt="Sahayika — Multilingual AI Health Companion"
+                  alt="Aanya — Multilingual AI Health Companion"
                   className="absolute inset-0 h-full w-full rounded-[40px] object-cover"
                 />
 
                 <div className="absolute right-5 bottom-5 left-5 flex items-center gap-3 rounded-2xl border border-white bg-white/90 p-3.5 shadow-lg shadow-slate-950/5 backdrop-blur sm:right-7 sm:bottom-7 sm:left-7 sm:p-4">
                   <BrandMark className="size-9 rounded-xl" />
                   <div className="min-w-0 flex-1">
-                    <p className="truncate text-sm font-bold text-[#111a2e]">Sahayika is ready</p>
+                    <p className="truncate text-sm font-bold text-[#111a2e]">Aanya is ready</p>
                     <p className="truncate text-xs text-slate-500">
                       Tap Get started and begin speaking
                     </p>
@@ -558,13 +558,13 @@ export const WelcomeView = ({
           <div className="mx-auto w-full max-w-[1240px] px-5 sm:px-8 lg:px-10">
             <Reveal className="grid gap-8 lg:grid-cols-[.78fr_1.22fr] lg:items-end">
               <div>
-                <p className="aanya-kicker">About Sahayika</p>
+                <p className="aanya-kicker">About Aanya</p>
                 <h2 className="mt-5 max-w-lg text-4xl leading-[1.03] font-semibold tracking-[-0.045em] text-[#10182b] sm:text-5xl">
                   A calmer first step for everyday health questions.
                 </h2>
               </div>
               <p className="max-w-2xl text-lg leading-8 text-slate-600 lg:justify-self-end">
-                Sahayika makes general health information feel easier to access by turning it into a
+                Aanya makes general health information feel easier to access by turning it into a
                 natural voice conversation. Speak, listen, and leave with a clearer understanding of
                 what to consider next.
               </p>
@@ -634,7 +634,7 @@ export const WelcomeView = ({
                 A little clarity before you begin.
               </h2>
               <p className="mt-5 max-w-md text-lg leading-8 text-slate-600">
-                Sahayika is designed for general health guidance, with clear boundaries around urgent
+                Aanya is designed for general health guidance, with clear boundaries around urgent
                 or clinical care.
               </p>
             </Reveal>
@@ -664,7 +664,7 @@ export const WelcomeView = ({
             />
             <div className="relative z-10 mx-auto max-w-3xl">
               <p className="text-xs font-bold tracking-[0.16em] text-violet-200 uppercase">
-                Sahayika is ready when you are
+                Aanya is ready when you are
               </p>
               <h2 className="mt-5 text-4xl leading-[1.02] font-semibold tracking-[-0.05em] sm:text-5xl lg:text-6xl">
                 Start with your voice. Find a clearer next step.
@@ -695,16 +695,16 @@ export const WelcomeView = ({
               className="inline-flex items-center gap-3 rounded-xl focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-violet-600"
             >
               <BrandMark className="size-9 rounded-xl" />
-              <span className="text-lg font-bold tracking-[-0.03em] text-[#111a2e]">Sahayika</span>
+              <span className="text-lg font-bold tracking-[-0.03em] text-[#111a2e]">Aanya</span>
             </a>
             <p className="mt-4 max-w-xl text-sm leading-6 text-slate-500">
-              Sahayika provides general health information, not medical diagnosis or emergency care.
+              Aanya provides general health information, not medical diagnosis or emergency care.
               Always consult a qualified healthcare professional for medical concerns.
             </p>
           </div>
           <div className="text-sm text-slate-500 md:text-right">
             <p>Gnani AI (Prisma & Timbre) + LiveKit</p>
-            <p className="mt-1">© 2026 Sahayika</p>
+            <p className="mt-1">© 2026 Aanya</p>
           </div>
         </div>
       </footer>

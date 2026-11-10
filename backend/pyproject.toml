@@ -3,9 +3,9 @@ requires = ["setuptools>=61.0", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "sahayika-ai-health-agent"
+name = "aanya-ai-health-agent"
 version = "1.0.0"
-description = "Sahayika - Real-Time Multilingual Voice AI Health Companion"
+description = "Aanya - Real-Time Multilingual Voice AI Health Companion"
 readme = "README.md"
 authors = [
     { name = "Harshit Dubey", email = "dubeyharshit5015@gmail.com" }

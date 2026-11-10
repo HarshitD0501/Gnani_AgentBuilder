@@ -1,5 +1,5 @@
 """
-Deterministic Safety, Triage and Medical Boundary Module for Sahayika.
+Deterministic Safety, Triage and Medical Boundary Module for Aanya.
 
 Provides rule-based, deterministic red-flag emergency detection across Hindi, English,
 and Roman Hindi (Hinglish) without requiring LLM or network availability.
@@ -26,7 +26,7 @@ DETERMINISTIC_EMERGENCY_GUIDANCE: Final[str] = (
 )
 
 MEDICAL_BOUNDARY_MESSAGE: Final[str] = (
-    "मैं सहायिका हूँ, आपकी स्वास्थ्य मार्गदर्शिका। मैं सामान्य स्वास्थ्य जानकारी दे सकती हूँ, "
+    "मैं आन्या हूँ, आपकी स्वास्थ्य मार्गदर्शिका। मैं सामान्य स्वास्थ्य जानकारी दे सकती हूँ, "
     "परंतु दवा की सलाह (prescription), खुराक (dosage) या बीमारी की पुष्टि (diagnosis) नहीं कर सकती। "
     "कृपया उचित जांच और उपचार के लिए नजदीकी डॉक्टर या प्राथमिक स्वास्थ्य केंद्र (PHC) से संपर्क करें।"
 )

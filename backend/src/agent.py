@@ -45,7 +45,7 @@ logger = logging.getLogger("agent")
 load_dotenv(".env.local")
 
 # ---------------------------------------------------------------------------
-# Which Gemini model Sahayika thinks with.
+# Which Gemini model Aanya thinks with.
 #
 # Google retires these without warning: gemini-2.0-flash started returning
 # 404 NOT_FOUND mid-project, and gemini-2.5-flash is gone too — while both were
@@ -68,7 +68,7 @@ load_dotenv(".env.local")
 GEMINI_MODEL = os.getenv("GEMINI_MODEL", "gemini-3.5-flash-lite")
 
 SYSTEM_PROMPT = """IDENTITY & ROLE
-You are Sahayika, a calm, empathetic, and knowledgeable female multilingual healthcare companion. You speak in a natural, respectful tone to help users understand their health concerns. You provide supportive general health guidance, preventive wellness tips, facility lookups, and personal visit reminders. You are an AI health guide, not a clinician or hospital representative.
+You are Aanya, a calm, empathetic, and knowledgeable female multilingual healthcare companion. You speak in a natural, respectful tone to help users understand their health concerns. You provide supportive general health guidance, preventive wellness tips, facility lookups, and personal visit reminders. You are an AI health guide, not a clinician or hospital representative.
 
 VOICE RESPONSE BUDGET & BREVITY
 - Keep responses concise: 1 to 3 conversational sentences per turn.
@@ -160,13 +160,13 @@ CLOSING: deliver the farewell in their language, then call `end_call`.
 # Day 9 — Clinic & Appointment Specialist
 # ---------------------------------------------------------------------------
 SPECIALIST_PROMPT = """IDENTITY
-You are the Clinic & Appointment Specialist for Sahayika Health Services. You are an expert at locating Primary Health Centres (PHC), Community Health Centres (CHC), civil hospitals, and booking clinic appointments for callers.
+You are the Clinic & Appointment Specialist for Aanya Health Services. You are an expert at locating Primary Health Centres (PHC), Community Health Centres (CHC), civil hospitals, and booking clinic appointments for callers.
 
 OBJECTIVES
 1. Find nearby PHCs, CHCs, and government health centers using `lookup_nearest_phc`.
 2. Help callers schedule appointments at nearby clinics using `book_clinic_appointment`.
 3. List existing appointments when asked using `list_my_appointments`.
-4. Maintain strict boundaries: you do NOT give general medical advice, symptom diagnosis, sleep/diet advice, or medication guidance. If a caller asks about symptoms, medical advice, or remedies, you MUST return them to Sahayika using `return_to_health_advisor`.
+4. Maintain strict boundaries: you do NOT give general medical advice, symptom diagnosis, sleep/diet advice, or medication guidance. If a caller asks about symptoms, medical advice, or remedies, you MUST return them to Aanya using `return_to_health_advisor`.
 
 LANGUAGE & ACCENT (STRICT LANGUAGE MATCHING)
 - Detect the language the user is speaking and ALWAYS reply in that EXACT language.
@@ -192,7 +192,7 @@ BOOKING AN APPOINTMENT WORKFLOW:
 - After booking, read the reference number (e.g. APT-2001) slowly and clearly digit-by-digit, and confirm the details.
 
 RETURN TO HEALTH ADVISOR:
-- If the user asks for general health advice, symptom triage, diet/sleep tips, home remedies, or medicine reminders, politely explain that you specialize in clinic visits and transfer them back to Sahayika using `return_to_health_advisor`.
+- If the user asks for general health advice, symptom triage, diet/sleep tips, home remedies, or medicine reminders, politely explain that you specialize in clinic visits and transfer them back to Aanya using `return_to_health_advisor`.
 """
 
 
@@ -456,7 +456,7 @@ def build_outbound_opening(call_info: dict) -> str:
 
     if language == "English":
         opening = (
-            f"Hello {name}, this is Sahayika calling from your health reminder service. "
+            f"Hello {name}, this is Aanya calling from your health reminder service. "
             f"You had set a reminder for {medicine}"
         )
         if when:
@@ -1282,12 +1282,12 @@ class ClinicAppointmentSpecialist(HealthAgentBase):
 
     @function_tool
     async def return_to_health_advisor(self, context: RunContext) -> tuple[Agent, str]:
-        """Transfer caller back to Sahayika, the main Health Companion, for symptom guidance, wellness advice, diet, sleep, or medicine reminders."""
-        logger.info("Transferring caller back to Assistant (Sahayika)...")
+        """Transfer caller back to Aanya, the main Health Companion, for symptom guidance, wellness advice, diet, sleep, or medicine reminders."""
+        logger.info("Transferring caller back to Assistant (Aanya)...")
         assistant = Assistant(chat_ctx=self.chat_ctx.copy(exclude_instructions=True))
         return (
             assistant,
-            "Transferring back to Sahayika. Sahayika will now continue assisting with health questions and advice.",
+            "Transferring back to Aanya. Aanya will now continue assisting with health questions and advice.",
         )
 
 
@@ -1745,7 +1745,7 @@ async def run_outbound_reminder(ctx: JobContext, call_info: dict) -> None:
     )
 
 
-@server.rtc_session(agent_name=os.getenv("LIVEKIT_AGENT_NAME", "Sahayika"))
+@server.rtc_session(agent_name=os.getenv("LIVEKIT_AGENT_NAME", "Aanya"))
 async def my_agent(ctx: JobContext):
     db.init_db()
 
@@ -1926,27 +1926,27 @@ async def my_agent(ctx: JobContext):
         if lang == "English":
             if ongoing:
                 greeting_msg = (
-                    f"Hello {name}! Welcome back to Sahayika Health Companion. "
+                    f"Hello {name}! Welcome back to Aanya Health Companion. "
                     f"Last time you mentioned experiencing {ongoing}. How are you feeling today?"
                 )
             else:
                 greeting_msg = (
-                    f"Hello {name}! Welcome back to Sahayika Health Companion. "
+                    f"Hello {name}! Welcome back to Aanya Health Companion. "
                     f"How can I help you today?"
                 )
         else:
             if ongoing:
                 greeting_msg = (
-                    f"नमस्ते {name} जी! सहायिका में आपका फिर से स्वागत है। "
+                    f"नमस्ते {name} जी! आन्या में आपका फिर से स्वागत है। "
                     f"पिछली बार आपको {ongoing} की शिकायत थी। अब आपकी तबियत कैसी है?"
                 )
             else:
                 greeting_msg = (
-                    f"नमस्ते {name} जी! सहायिका में आपका फिर से स्वागत है। "
+                    f"नमस्ते {name} जी! आन्या में आपका फिर से स्वागत है। "
                     f"आज आपकी क्या सहायता कर सकती हूँ?"
                 )
     else:
-        greeting_msg = "नमस्ते! मैं सहायिका हूँ, आपकी हेल्थ साथी। आज आपकी क्या सहायता कर सकती हूँ?"
+        greeting_msg = "नमस्ते! मैं आन्या हूँ, आपकी हेल्थ साथी। आज आपकी क्या सहायता कर सकती हूँ?"
 
     await session.start(
         agent=assistant,

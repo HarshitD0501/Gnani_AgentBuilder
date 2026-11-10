@@ -326,12 +326,12 @@ def build_webhook_payload(
         return {"text": "\n".join(lines)}
 
     return {
-        "username": "Sahayika Health Desk",
+        "username": "Aanya Health Desk",
         "embeds": [
             {
                 "title": title,
                 "description": (
-                    "Sahayika stopped and asked for a human. The caller agreed to "
+                    "Aanya stopped and asked for a human. The caller agreed to "
                     "share these details."
                 ),
                 "color": _URGENCY_COLOURS.get(
@@ -341,7 +341,7 @@ def build_webhook_payload(
                     {"name": label, "value": value or "-", "inline": False}
                     for label, value in fields
                 ],
-                "footer": {"text": "Sahayika voice agent - Human Escalation"},
+                "footer": {"text": "Aanya voice agent - Human Escalation"},
                 "timestamp": escalation.get("created_at", _now_iso()),
             }
         ],

@@ -1,7 +1,7 @@
-# Sahayika: Multilingual Voice AI Health Companion — Architecture & Implementation Plan
+# Aanya: Multilingual Voice AI Health Companion — Architecture & Implementation Plan
 
 **Prepared:** 10 November 2026, Asia/Kolkata.  
-**Repository:** `Sahayika`.  
+**Repository:** `Aanya-AI-Health-Agent`.  
 **Status:** System Architecture & Integration Specification.
 
 ## 1. Recommended outcome

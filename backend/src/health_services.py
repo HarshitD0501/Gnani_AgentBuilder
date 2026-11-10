@@ -78,7 +78,7 @@ def fetch_live_openstreetmap_hospitals(
             req = urllib.request.Request(
                 url,
                 headers={
-                    "User-Agent": "SahayikaVoiceHealthCompanion/1.0 (Health Access Companion; contact: support@sahayika.local)"
+                    "User-Agent": "AanyaVoiceHealthCompanion/1.0 (Health Access Companion; contact: support@aanya.local)"
                 },
             )
             with urllib.request.urlopen(req, timeout=timeout) as response:

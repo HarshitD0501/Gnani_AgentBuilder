@@ -14,7 +14,7 @@ type ConnectionDetails = {
 const API_KEY = process.env.LIVEKIT_API_KEY;
 const API_SECRET = process.env.LIVEKIT_API_SECRET;
 const LIVEKIT_URL = process.env.LIVEKIT_URL;
-const AGENT_NAME = process.env.AGENT_NAME || 'Sahayika';
+const AGENT_NAME = process.env.AGENT_NAME || 'Aanya';
 
 // don't cache the results
 export const revalidate = 0;
@@ -41,9 +41,9 @@ export async function POST(req: Request) {
       typeof body?.name === 'string' && body.name.trim().length > 0
         ? body.name.trim().slice(0, 32)
         : 'Guest';
-    const roomName = `sahayika_room_${sessionSuffix}`;
+    const roomName = `aanya_room_${sessionSuffix}`;
 
-    // Strictly enforce authorized agent dispatch to Sahayika
+    // Strictly enforce authorized agent dispatch to Aanya
     const roomConfig = RoomConfiguration.fromJson(
       { agents: [{ agentName: AGENT_NAME }] },
       { ignoreUnknownFields: true }

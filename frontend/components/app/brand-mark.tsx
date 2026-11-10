@@ -1,6 +1,6 @@
 import { cn } from '@/lib/shadcn/utils';
 
-/** The Sahayika waveform badge. Shared by the landing page and the internal dashboards. */
+/** The Aanya waveform badge. Shared by the landing page and the internal dashboards. */
 export function BrandMark({ className }: { className?: string }) {
   return (
     <span

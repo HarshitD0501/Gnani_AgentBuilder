@@ -251,7 +251,7 @@ export function AgentSessionView_01({
       <div className="absolute inset-x-4 top-4 z-40 flex items-center justify-between pointer-events-none md:inset-x-8">
         <div className="pointer-events-auto flex items-center gap-2.5 rounded-full bg-black/40 px-3.5 py-1.5 backdrop-blur-md border border-white/10">
           <span className="size-2 rounded-full bg-violet-400" />
-          <span className="text-xs font-semibold tracking-wide text-white/90">Sahayika</span>
+          <span className="text-xs font-semibold tracking-wide text-white/90">Aanya</span>
           <span className="text-[10px] text-white/50 border-l border-white/20 pl-2">Gnani AI</span>
         </div>
         <a

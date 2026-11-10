@@ -1,4 +1,4 @@
-# Sahayika — Turn-Level Latency & Pipeline Performance Report
+# Aanya — Turn-Level Latency & Pipeline Performance Report
 
 **Author:** Harshit Dubey  
 **Component:** Voice AI Health Companion (LiveKit + Gnani Prisma STT + Gnani Timbre TTS + Gemini)  
@@ -9,7 +9,7 @@
 
 ## 1. Executive Summary
 
-This report establishes the measured performance profile, endpointing delays, and concurrency model of **Sahayika**, a real-time multilingual voice AI healthcare companion. Voice conversations require tight latency bounds to feel responsive, while maintaining 100% deterministic safety boundaries and strict medical guardrails.
+This report establishes the measured performance profile, endpointing delays, and concurrency model of **Aanya**, a real-time multilingual voice AI healthcare companion. Voice conversations require tight latency bounds to feel responsive, while maintaining 100% deterministic safety boundaries and strict medical guardrails.
 
 ---
 
@@ -45,7 +45,7 @@ flowchart LR
 
 Measurements taken with free/community endpoints across synthetic turns in English, Hindi, and Hinglish.
 
-| Metric | Target | Baseline (Legacy Sync) | Optimized (Sahayika Async) | Improvement |
+| Metric | Target | Baseline (Legacy Sync) | Optimized (Aanya Async) | Improvement |
 | :--- | :---: | :---: | :---: | :---: |
 | **Deterministic Emergency Triage** | < 5 ms | N/A (Prompt only) | **0.15 ms** | **Instant bypass** |
 | **Medical Boundary Interception** | < 5 ms | N/A (Prompt only) | **0.12 ms** | **Instant bypass** |

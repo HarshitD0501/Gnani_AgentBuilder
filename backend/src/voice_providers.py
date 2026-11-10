@@ -1,5 +1,5 @@
 """
-voice_providers.py - Genuine Gnani Voice Pipeline Factory for Sahayika.
+voice_providers.py - Genuine Gnani Voice Pipeline Factory for Aanya.
 
 Provides factory functions to build:
 - Gnani Prisma STT (Speech-to-Text streaming with Hindi & English code-switching)
