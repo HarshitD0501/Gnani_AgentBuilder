@@ -45,7 +45,7 @@ logger = logging.getLogger("agent")
 load_dotenv(".env.local")
 
 # ---------------------------------------------------------------------------
-# Which Gemini model Aanya thinks with.
+# Which Gemini model Sahayika thinks with.
 #
 # Google retires these without warning: gemini-2.0-flash started returning
 # 404 NOT_FOUND mid-project, and gemini-2.5-flash is gone too — while both were
@@ -160,13 +160,13 @@ CLOSING: deliver the farewell in their language, then call `end_call`.
 # Day 9 — Clinic & Appointment Specialist
 # ---------------------------------------------------------------------------
 SPECIALIST_PROMPT = """IDENTITY
-You are the Clinic & Appointment Specialist for Aanya Health Services. You are an expert at locating Primary Health Centres (PHC), Community Health Centres (CHC), civil hospitals, and booking clinic appointments for callers.
+You are the Clinic & Appointment Specialist for Sahayika Health Services. You are an expert at locating Primary Health Centres (PHC), Community Health Centres (CHC), civil hospitals, and booking clinic appointments for callers.
 
 OBJECTIVES
 1. Find nearby PHCs, CHCs, and government health centers using `lookup_nearest_phc`.
 2. Help callers schedule appointments at nearby clinics using `book_clinic_appointment`.
 3. List existing appointments when asked using `list_my_appointments`.
-4. Maintain strict boundaries: you do NOT give general medical advice, symptom diagnosis, sleep/diet advice, or medication guidance. If a caller asks about symptoms, medical advice, or remedies, you MUST return them to Aanya using `return_to_health_advisor`.
+4. Maintain strict boundaries: you do NOT give general medical advice, symptom diagnosis, sleep/diet advice, or medication guidance. If a caller asks about symptoms, medical advice, or remedies, you MUST return them to Sahayika using `return_to_health_advisor`.
 
 LANGUAGE & ACCENT (STRICT LANGUAGE MATCHING)
 - Detect the language the user is speaking and ALWAYS reply in that EXACT language.
@@ -192,7 +192,7 @@ BOOKING AN APPOINTMENT WORKFLOW:
 - After booking, read the reference number (e.g. APT-2001) slowly and clearly digit-by-digit, and confirm the details.
 
 RETURN TO HEALTH ADVISOR:
-- If the user asks for general health advice, symptom triage, diet/sleep tips, home remedies, or medicine reminders, politely explain that you specialize in clinic visits and transfer them back to Aanya using `return_to_health_advisor`.
+- If the user asks for general health advice, symptom triage, diet/sleep tips, home remedies, or medicine reminders, politely explain that you specialize in clinic visits and transfer them back to Sahayika using `return_to_health_advisor`.
 """
 
 
@@ -1745,7 +1745,7 @@ async def run_outbound_reminder(ctx: JobContext, call_info: dict) -> None:
     )
 
 
-@server.rtc_session(agent_name="Aanya")
+@server.rtc_session(agent_name=os.getenv("LIVEKIT_AGENT_NAME", "Sahayika"))
 async def my_agent(ctx: JobContext):
     db.init_db()
 

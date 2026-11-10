@@ -36,7 +36,7 @@ load_dotenv(".env.local")
 logging.basicConfig(level=logging.INFO, format="%(levelname)s %(name)s: %(message)s")
 logger = logging.getLogger("outbound")
 
-AGENT_NAME = os.getenv("LIVEKIT_AGENT_NAME", "Aanya")
+AGENT_NAME = os.getenv("LIVEKIT_AGENT_NAME", "Sahayika")
 
 
 # How long we let the phone ring before giving up and calling it a no-answer.
