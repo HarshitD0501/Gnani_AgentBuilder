@@ -1,8 +1,8 @@
-# Aanya: Gnani Hackathon Adaptation Plan
+# Sahayika: Multilingual Voice AI Health Companion — Architecture & Implementation Plan
 
-**Prepared and official sources rechecked:** 10 November 2026, Asia/Kolkata.  
-**Repository:** `Aanya-AI-Health-Agent`.  
-**Status:** PLAN ONLY. No application changes, installs, provider calls, migrations, deployment or commits authorized by this document.
+**Prepared:** 10 November 2026, Asia/Kolkata.  
+**Repository:** `Sahayika`.  
+**Status:** System Architecture & Integration Specification.
 
 ## 1. Recommended outcome
 
@@ -61,7 +61,7 @@ Retain working media controls, transcript UI, shared session builder and useful 
 
 **Conditional small action:** save a fictional visit plan in local SQLite, explicitly labeled personal planning. Reuse appointment storage only if owner/session scope, concrete date/time validation and duplicate prevention can be tested within time. Otherwise disable the tool and show a genuine facility lookup. A conversation-only application with genuine Gnani use is preferable to a false booking demonstration.
 
-**Deferred from hackathon-critical path:** Meta WhatsApp, SIP outbound dialing, coordinator Slack/Discord delivery, production healthcare records, new PostgreSQL migration, full frontend redesign, broad RAG, Grok/Murf fallback, automatic ambulance calls and extra personas. These remain future product work, not delivered features.
+**Deferred from MVP scope:** Meta WhatsApp, SIP outbound dialing, coordinator Slack/Discord delivery, production healthcare records, new PostgreSQL migration, full frontend redesign, broad RAG, Grok/Murf fallback, automatic ambulance calls and extra personas. These remain future product work, not delivered features.
 
 This is a proposed scope reduction for the competition build. Explicit implementation approval should include acceptance of that scope; do not describe deferred original requirements as complete.
 
@@ -107,7 +107,7 @@ Tasks:
 3. Separate offline tests and explicitly opted-in live model evaluations. Write prompt/tool regression tests before changing behavior, as required by `AGENTS.md`.
 4. Default test mode blocks external HTTP/SDK calls, SIP dialing, webhooks and background scheduling. Explicit integration markers are required to use providers.
 5. Establish baseline startup, text/voice behavior and existing test results without adopting README numbers as verified.
-6. Define a validated `HACKATHON_DEMO_MODE` that disables personal-memory collection, outbound calls, escalation delivery and hosted model judging. It must control tool registration and worker startup, not just hide UI buttons.
+6. Define a validated `DEMO_MODE` that disables personal-memory collection, outbound calls, escalation delivery and hosted model judging. It must control tool registration and worker startup, not just hide UI buttons.
 
 **Files:** `backend/pyproject.toml`, `backend/uv.lock`, `backend/tests/conftest.py`, new `backend/src/demo_policy.py`, environment examples, `docs/evaluation/BASELINE.md`.
 
@@ -271,7 +271,7 @@ Release blockers: any known cross-user disclosure, unauthorized mutation, false 
 
 Default rehearsal is local browser + existing LiveKit transport with verified credentials; use self-hosted LiveKit only if already feasible on the available system. Do not assume LiveKit Cloud or noise cancellation is free without checking entitlement. Preserve SQLite on durable local storage; do not place its shared filesystem design into separate ephemeral backend/frontend hosts and expect analytics to work.
 
-No new Supabase/PostgreSQL dependency is needed for the narrow hackathon adaptation. No clinical deployment, patient dataset, external messaging, voice cloning or paid model fallback is authorized. Synthetic development traces must not include unrelated real data from previously populated databases; use a separately named clean demo database, never wipe the original automatically.
+No new Supabase/PostgreSQL dependency is needed for the initial release. No clinical deployment, patient dataset, external messaging, voice cloning or paid model fallback is authorized. Synthetic development traces must not include unrelated real data from previously populated databases; use a separately named clean demo database, never wipe the original automatically.
 
 Keep diagnostic output to durations, provider/model identifiers, request IDs and safe error codes. Review hosted observability settings: [LiveKit observability](https://docs.livekit.io/testing/observability/) can include conversation/audio data, so do not assume logging is metadata-only. Disable unnecessary capture and inspect actual account behavior.
 
@@ -288,7 +288,7 @@ If time is insufficient: disable local visit plans, facility search, memory, spe
 1. Is the Gnani account registered and credited, and which speech versions are entitled? Provide status only, not keys.
 2. Is the intended Gemini project unpaid, and what LiveKit entitlement is available? No paid account is presumed.
 3. Is Aanya the user's own earlier work or third-party code being adapted? Contribution wording depends on this; preserve licenses either way.
-4. Before coding, approve this narrowed hackathon scope, with WhatsApp/SIP/major redesign deferred and one phase executed at a time.
+4. Before coding, approve this narrowed release scope, with WhatsApp/SIP/major redesign deferred and one phase executed at a time.
 
 Until answered: assume credentials/access unverified, external paid paths disabled, provenance disclosure pending and optional product features deferred. No model/voice quality or package compatibility is claimed as measured.
 

@@ -19,6 +19,7 @@ def test_db(tmp_path):
     return db_file
 
 
+@pytest.mark.external_network
 def test_phc_lookup_success():
     """Test successful live lookup of Primary Health Centre by district via OpenStreetMap."""
     result = search_health_facilities("jaipur")
@@ -29,6 +30,7 @@ def test_phc_lookup_success():
     assert facility["emergency_services"] is True
 
 
+@pytest.mark.external_network
 def test_phc_lookup_by_pincode():
     """Test lookup of PHC using 6-digit pincode."""
     result = search_health_facilities("302001")
