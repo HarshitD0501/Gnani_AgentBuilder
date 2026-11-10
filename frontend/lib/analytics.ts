@@ -1,3 +1,4 @@
+import fs from 'node:fs';
 import path from 'node:path';
 import { DatabaseSync } from 'node:sqlite';
 
@@ -40,6 +41,18 @@ function resolveDbPath(): string {
 export function getCallAnalytics(limit = 50): AnalyticsQueryResult {
   const dbPath = resolveDbPath();
   let db: DatabaseSync | undefined;
+
+  if (!fs.existsSync(dbPath)) {
+    return {
+      total_calls: 0,
+      successful_calls: 0,
+      failed_calls: 0,
+      success_rate: '0.0%',
+      recent_calls: [],
+      dbPath,
+      tableMissing: true,
+    };
+  }
 
   try {
     db = new DatabaseSync(dbPath, { readOnly: true });

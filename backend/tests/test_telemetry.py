@@ -16,11 +16,11 @@ def test_turn_metrics_calculations():
         session_id="sess_abc",
         user_speech_stopped_at=t0,
         transcript_received_at=t0 + 0.35,  # 350ms STT
-        decision_completed_at=t0 + 0.36,   # 10ms triage
+        decision_completed_at=t0 + 0.36,  # 10ms triage
         llm_start_at=t0 + 0.36,
-        llm_first_token_at=t0 + 0.85,      # 500ms TTFT
+        llm_first_token_at=t0 + 0.85,  # 500ms TTFT
         llm_completed_at=t0 + 1.20,
-        tts_first_chunk_at=t0 + 1.10,      # 750ms TTFA
+        tts_first_chunk_at=t0 + 1.10,  # 750ms TTFA
         tts_completed_at=t0 + 1.80,
     )
 

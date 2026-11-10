@@ -45,8 +45,10 @@ def test_build_gnani_tts_female_voice():
 
 def test_build_gnani_raises_on_missing_key():
     import pytest
-    with patch.dict(os.environ, {}, clear=True), pytest.raises(
-        ValueError, match="Gnani API key is required"
+
+    with (
+        patch.dict(os.environ, {}, clear=True),
+        pytest.raises(ValueError, match="Gnani API key is required"),
     ):
         build_gnani_stt()
 

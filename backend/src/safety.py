@@ -38,7 +38,9 @@ class TriageResult:
     category: str | None = None
     reason: str | None = None
     guidance_message: str = ""
-    emergency_numbers: list[str] = dataclasses.field(default_factory=lambda: ["112", "108"])
+    emergency_numbers: list[str] = dataclasses.field(
+        default_factory=lambda: ["112", "108"]
+    )
 
 
 # Negation terms across English and Hindi/Roman Hindi
@@ -50,55 +52,131 @@ _NEGATION_PREFIXES = (
 # Emergency category keywords and regexes
 _EMERGENCY_PATTERNS: dict[str, list[re.Pattern[str]]] = {
     "cardiac": [
-        re.compile(r"\b(chest pain|heart attack|chest tightness|chest pressure|radiating pain to left arm)\b", re.IGNORECASE),
-        re.compile(r"(सीने में दर्द|दिल का दौरा|सीने में दबाव|छाती में दर्द|सीने में भारीपन)", re.IGNORECASE),
-        re.compile(r"\b(seene? mein? dard|sine me dard|dil ka daura|chhati me dard|seene me jalan aur dard)\b", re.IGNORECASE),
+        re.compile(
+            r"\b(chest pain|heart attack|chest tightness|chest pressure|radiating pain to left arm)\b",
+            re.IGNORECASE,
+        ),
+        re.compile(
+            r"(सीने में दर्द|दिल का दौरा|सीने में दबाव|छाती में दर्द|सीने में भारीपन)", re.IGNORECASE
+        ),
+        re.compile(
+            r"\b(seene? mein? dard|sine me dard|dil ka daura|chhati me dard|seene me jalan aur dard)\b",
+            re.IGNORECASE,
+        ),
     ],
     "respiratory": [
-        re.compile(r"\b(cannot breathe|can't breathe|cant breathe|difficulty breathing|shortness of breath|choking|severe asthma attack|gasping for air)\b", re.IGNORECASE),
-        re.compile(r"(साँस लेने में दिक्कत|सांस नहीं आ रही|दम घुट रहा|सांस फूल रही|सांस रुकना)", re.IGNORECASE),
-        re.compile(r"\b(saans lene me(in)? dikkat|saans? nahi aa rahi|dam ghut raha|saans ruk rahi|choking)\b", re.IGNORECASE),
+        re.compile(
+            r"\b(cannot breathe|can't breathe|cant breathe|difficulty breathing|shortness of breath|choking|severe asthma attack|gasping for air)\b",
+            re.IGNORECASE,
+        ),
+        re.compile(
+            r"(साँस लेने में दिक्कत|सांस नहीं आ रही|दम घुट रहा|सांस फूल रही|सांस रुकना)",
+            re.IGNORECASE,
+        ),
+        re.compile(
+            r"\b(saans lene me(in)? dikkat|saans? nahi aa rahi|dam ghut raha|saans ruk rahi|choking)\b",
+            re.IGNORECASE,
+        ),
     ],
     "stroke": [
-        re.compile(r"\b(stroke|face\s+(is\s+)?drooping|slurred\s+speech|speech\s+(is\s+)?slurred|sudden\s+paralysis|one\s+sided\s+weakness|facial\s+droop)\b", re.IGNORECASE),
+        re.compile(
+            r"\b(stroke|face\s+(is\s+)?drooping|slurred\s+speech|speech\s+(is\s+)?slurred|sudden\s+paralysis|one\s+sided\s+weakness|facial\s+droop)\b",
+            re.IGNORECASE,
+        ),
         re.compile(r"(स्ट्रोक|लकवा|चेहरा लटकना|आधा शरीर सुन्न|बोलने में असमर्थ)", re.IGNORECASE),
-        re.compile(r"\b(stroke|lakwa|chehra tedha|aadha sharir sunn|bolne me dikkat)\b", re.IGNORECASE),
+        re.compile(
+            r"\b(stroke|lakwa|chehra tedha|aadha sharir sunn|bolne me dikkat)\b",
+            re.IGNORECASE,
+        ),
     ],
     "trauma_bleeding": [
-        re.compile(r"\b(severe bleeding|uncontrolled bleeding|heavy bleeding|heavy blood loss|head injury|severe burn|skull fracture)\b", re.IGNORECASE),
-        re.compile(r"(भारी रक्तस्राव|खून बहना बंद नहीं|सिर में गंभीर चोट|गंभीर रूप से जल गया)", re.IGNORECASE),
-        re.compile(r"\b(severe bleeding|khoon beh raha hai|bahut jyada khoon|sar me(in)? chot|jal gaya)\b", re.IGNORECASE),
+        re.compile(
+            r"\b(severe bleeding|uncontrolled bleeding|heavy bleeding|heavy blood loss|head injury|severe burn|skull fracture)\b",
+            re.IGNORECASE,
+        ),
+        re.compile(
+            r"(भारी रक्तस्राव|खून बहना बंद नहीं|सिर में गंभीर चोट|गंभीर रूप से जल गया)",
+            re.IGNORECASE,
+        ),
+        re.compile(
+            r"\b(severe bleeding|khoon beh raha hai|bahut jyada khoon|sar me(in)? chot|jal gaya)\b",
+            re.IGNORECASE,
+        ),
     ],
     "poisoning": [
-        re.compile(r"\b(swallowed poison|poisoning|chemical ingestion|drug overdose|drank pesticide)\b", re.IGNORECASE),
+        re.compile(
+            r"\b(swallowed poison|poisoning|chemical ingestion|drug overdose|drank pesticide)\b",
+            re.IGNORECASE,
+        ),
         re.compile(r"(जहर खा लिया|विषाक्तता|कीटनाशक पी लिया|ओवरडोज)", re.IGNORECASE),
-        re.compile(r"\b(zehar kha liya|poison pee liya|keetnashak|dawa overdose)\b", re.IGNORECASE),
+        re.compile(
+            r"\b(zehar kha liya|poison pee liya|keetnashak|dawa overdose)\b",
+            re.IGNORECASE,
+        ),
     ],
     "unconsciousness": [
-        re.compile(r"\b(unconscious|passed out|unresponsive|not waking up|severe seizure)\b", re.IGNORECASE),
+        re.compile(
+            r"\b(unconscious|passed out|unresponsive|not waking up|severe seizure)\b",
+            re.IGNORECASE,
+        ),
         re.compile(r"(बेहोश हो गया|अचेत|होश नहीं आ रहा|दौरा पड़ रहा)", re.IGNORECASE),
-        re.compile(r"\b(behosh|hosh nahi(n)? hai|faint ho gaya|seizure aa gaya)\b", re.IGNORECASE),
+        re.compile(
+            r"\b(behosh|hosh nahi(n)? hai|faint ho gaya|seizure aa gaya)\b",
+            re.IGNORECASE,
+        ),
     ],
 }
 
 # Negation window check
 _NEGATION_WORDS = {
-    "no", "not", "dont", "don't", "never", "without", "nahi", "nhi", "nahin", "na"
+    "no",
+    "not",
+    "dont",
+    "don't",
+    "never",
+    "without",
+    "nahi",
+    "nhi",
+    "nahin",
+    "na",
 }
 
 # Boundary checks for prescription and clinical diagnosis requests
 _PRESCRIPTION_PATTERNS = [
-    re.compile(r"\b(prescribe|prescription|which medicine should i take|what tablet to take|give me medicine for)\b", re.IGNORECASE),
-    re.compile(r"\b(dosage|how many tablets|how many mg|kitni goli|kitni khurak|dawa ka dose)\b", re.IGNORECASE),
-    re.compile(r"\b(stop taking|increase dose|change medication|dawa band kar du|dawa badal lu)\b", re.IGNORECASE),
-    re.compile(r"(कौन सी दवाई लूँ|दवा का नाम बताओ|कितनी गोली खानी है|दवाई प्रिस्क्राइब करो)", re.IGNORECASE),
-    re.compile(r"\b(kaun si dawa|dawai batao|kitni goli khani hai|dawa suggest karo)\b", re.IGNORECASE),
+    re.compile(
+        r"\b(prescribe|prescription|which medicine should i take|what tablet to take|give me medicine for)\b",
+        re.IGNORECASE,
+    ),
+    re.compile(
+        r"\b(dosage|how many tablets|how many mg|kitni goli|kitni khurak|dawa ka dose)\b",
+        re.IGNORECASE,
+    ),
+    re.compile(
+        r"\b(stop taking|increase dose|change medication|dawa band kar du|dawa badal lu)\b",
+        re.IGNORECASE,
+    ),
+    re.compile(
+        r"(कौन सी दवाई लूँ|दवा का नाम बताओ|कितनी गोली खानी है|दवाई प्रिस्क्राइब करो)",
+        re.IGNORECASE,
+    ),
+    re.compile(
+        r"\b(kaun si dawa|dawai batao|kitni goli khani hai|dawa suggest karo)\b",
+        re.IGNORECASE,
+    ),
 ]
 
 _DIAGNOSIS_PATTERNS = [
-    re.compile(r"\b(diagnose me|confirm my disease|do i have cancer|tell me what disease i have)\b", re.IGNORECASE),
-    re.compile(r"(क्या मुझे कैंसर है|मेरी बीमारी का निदान करो|मुझे कौन सा रोग है)", re.IGNORECASE),
-    re.compile(r"\b(kya mujhe typhoid hai|kya mujhe cancer hai|bimari batao confirm karke)\b", re.IGNORECASE),
+    re.compile(
+        r"\b(diagnose me|confirm my disease|do i have cancer|tell me what disease i have)\b",
+        re.IGNORECASE,
+    ),
+    re.compile(
+        r"(क्या मुझे कैंसर है|मेरी बीमारी का निदान करो|मुझे कौन सा रोग है)", re.IGNORECASE
+    ),
+    re.compile(
+        r"\b(kya mujhe typhoid hai|kya mujhe cancer hai|bimari batao confirm karke)\b",
+        re.IGNORECASE,
+    ),
 ]
 
 
@@ -115,13 +193,13 @@ def _is_negated(text: str, match_start: int, match_end: int) -> bool:
     negation_tokens = _NEGATION_WORDS | {"नहीं", "ना", "नही", "nahin", "nhi"}
 
     # Preceding context (up to 40 characters)
-    pre_window = text[max(0, match_start - 40):match_start].lower()
+    pre_window = text[max(0, match_start - 40) : match_start].lower()
     pre_tokens = _tokenize_window(pre_window)
     if any(token in negation_tokens or "नह" in token for token in pre_tokens[-3:]):
         return True
 
     # Check for direct post-negation (e.g. 'chest pain nahi hai' or 'सीने में दर्द नहीं है')
-    post_window = text[match_end:match_end + 30].lower()
+    post_window = text[match_end : match_end + 30].lower()
     post_tokens = _tokenize_window(post_window)
     return any(token in negation_tokens or "नह" in token for token in post_tokens[:3])
 
@@ -136,7 +214,19 @@ def _is_pure_educational_query(text: str) -> bool:
     lowered = text.lower()
     has_personal_pronoun = any(
         p in lowered
-        for p in ("i have", "i'm", "im having", "my", "mere", "mujhe", "hamare", "meri", "father", "mother", "bhai")
+        for p in (
+            "i have",
+            "i'm",
+            "im having",
+            "my",
+            "mere",
+            "mujhe",
+            "hamare",
+            "meri",
+            "father",
+            "mother",
+            "bhai",
+        )
     )
     if has_personal_pronoun:
         return False

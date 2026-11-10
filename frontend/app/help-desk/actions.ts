@@ -34,7 +34,7 @@ export async function unlockHelpDesk(
     httpOnly: true,
     sameSite: 'lax',
     secure: process.env.NODE_ENV === 'production',
-    path: '/help-desk',
+    path: '/',
     maxAge: HELPDESK_COOKIE_MAX_AGE,
   });
 

@@ -107,4 +107,3 @@ def get_voice_pipeline_attribution() -> dict[str, str]:
         "tts_voice": DEFAULT_TTS_VOICE,
         "tts_model": DEFAULT_TTS_MODEL,
     }
-

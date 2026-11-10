@@ -79,7 +79,9 @@ def test_poisoning_and_unconsciousness():
 
 def test_negation_handling_english():
     # User clarifies they do NOT have chest pain
-    res = evaluate_emergency("I have a mild fever, but no chest pain and no breathing trouble")
+    res = evaluate_emergency(
+        "I have a mild fever, but no chest pain and no breathing trouble"
+    )
     assert res.is_emergency is False
 
 
@@ -97,7 +99,9 @@ def test_educational_query_not_flagged():
 
 
 def test_medical_boundary_prescription():
-    violated, msg = check_medical_boundary("Which medicine should I take for my headache? Prescribe me something.")
+    violated, msg = check_medical_boundary(
+        "Which medicine should I take for my headache? Prescribe me something."
+    )
     assert violated is True
     assert msg == MEDICAL_BOUNDARY_MESSAGE
 
@@ -107,7 +111,9 @@ def test_medical_boundary_prescription():
 
 
 def test_medical_boundary_dosage():
-    violated, msg = check_medical_boundary("How many tablets of paracetamol should I take?")
+    violated, msg = check_medical_boundary(
+        "How many tablets of paracetamol should I take?"
+    )
     assert violated is True
     assert msg == MEDICAL_BOUNDARY_MESSAGE
 
@@ -122,7 +128,9 @@ def test_medical_boundary_diagnosis():
 
 
 def test_safe_wellness_query_allowed():
-    violated, msg = check_medical_boundary("Can you give me general tips on staying hydrated?")
+    violated, msg = check_medical_boundary(
+        "Can you give me general tips on staying hydrated?"
+    )
     assert violated is False
     assert msg is None
 
@@ -141,7 +149,9 @@ async def test_assistant_llm_node_intercepts_emergency():
 
     agent = Assistant()
     chat_ctx = ChatContext()
-    chat_ctx.add_message(role="user", content="I have severe chest pain and cannot breathe")
+    chat_ctx.add_message(
+        role="user", content="I have severe chest pain and cannot breathe"
+    )
 
     chunks = []
     async for chunk in agent.llm_node(chat_ctx, tools=[], model_settings=None):
@@ -160,7 +170,10 @@ async def test_assistant_llm_node_intercepts_medical_boundary():
 
     agent = Assistant()
     chat_ctx = ChatContext()
-    chat_ctx.add_message(role="user", content="Which medicine should I take for headache? Prescribe me tablets.")
+    chat_ctx.add_message(
+        role="user",
+        content="Which medicine should I take for headache? Prescribe me tablets.",
+    )
 
     chunks = []
     async for chunk in agent.llm_node(chat_ctx, tools=[], model_settings=None):
@@ -168,4 +181,3 @@ async def test_assistant_llm_node_intercepts_medical_boundary():
 
     assert len(chunks) == 1
     assert "दवा की सलाह (prescription)" in chunks[0]
-

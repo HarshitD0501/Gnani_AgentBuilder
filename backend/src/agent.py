@@ -1266,12 +1266,12 @@ class ClinicAppointmentSpecialist(HealthAgentBase):
         phone = userdata.get("phone_number", "")
         if phone:
             rows = await asyncio.to_thread(
-                appointments.list_appointments_for_caller, caller_phone=phone, limit=limit
+                appointments.list_appointments_for_caller,
+                caller_phone=phone,
+                limit=limit,
             )
         else:
-            rows = await asyncio.to_thread(
-                appointments.list_appointments, limit=limit
-            )
+            rows = await asyncio.to_thread(appointments.list_appointments, limit=limit)
         if not rows:
             return "No clinic appointments found."
         items = [
@@ -1819,12 +1819,18 @@ async def my_agent(ctx: JobContext):
 
         # Identity isolation: Never fall back to a previous caller's memory for anonymous callers
         if not demo_policy.is_demo_mode():
-            if participant.identity and not participant.identity.startswith("default_") and not participant.identity.startswith("user_"):
+            if (
+                participant.identity
+                and not participant.identity.startswith("default_")
+                and not participant.identity.startswith("user_")
+            ):
                 caller_record = db.get_caller_memory(participant.identity)
             if not caller_record and phone_number:
                 caller_record = db.get_caller_memory(phone_number)
         else:
-            logger.info("Demo mode active: strictly isolating session identity; no cross-user memory fallback.")
+            logger.info(
+                "Demo mode active: strictly isolating session identity; no cross-user memory fallback."
+            )
             caller_record = None
     except Exception as e:
         logger.warning(f"Could not fetch participant on connect: {e}")

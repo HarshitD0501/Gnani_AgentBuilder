@@ -1,3 +1,4 @@
+import fs from 'node:fs';
 import path from 'node:path';
 import { DatabaseSync } from 'node:sqlite';
 
@@ -53,6 +54,10 @@ function resolveDbPath(): string {
 export function getEscalations(limit = 100): EscalationQueryResult {
   const dbPath = resolveDbPath();
   let db: DatabaseSync | undefined;
+
+  if (!fs.existsSync(dbPath)) {
+    return { rows: [], dbPath, tableMissing: true };
+  }
 
   try {
     db = new DatabaseSync(dbPath, { readOnly: true });

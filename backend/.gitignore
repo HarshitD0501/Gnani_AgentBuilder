@@ -11,6 +11,8 @@ KMS
 *.egg-info/
 .pytest_cache
 .ruff_cache
+.test-tmp-*
+audit-baseline.txt
 
 # SQLite Databases
 *.db

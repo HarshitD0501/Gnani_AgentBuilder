@@ -59,7 +59,9 @@ def fetch_live_openstreetmap_hospitals(
     if cache_key in _FACILITY_CACHE:
         cached_time, cached_results = _FACILITY_CACHE[cache_key]
         if now - cached_time < _CACHE_TTL_SEC:
-            logger.info(f"Serving OSM hospital results from in-memory cache for '{cache_key}' (0ms network delay).")
+            logger.info(
+                f"Serving OSM hospital results from in-memory cache for '{cache_key}' (0ms network delay)."
+            )
             return cached_results
 
     queries_to_try = [
@@ -93,10 +95,18 @@ def fetch_live_openstreetmap_hospitals(
                             else f"Hospital in {location.title()}"
                         )
                         postcode = item.get("address", {}).get("postcode", "")
-                        extratags = item.get("extratags") if isinstance(item.get("extratags"), dict) else {}
+                        extratags = (
+                            item.get("extratags")
+                            if isinstance(item.get("extratags"), dict)
+                            else {}
+                        )
                         emergency_tag = extratags.get("emergency") == "yes"
                         raw_hours = extratags.get("opening_hours")
-                        operating_hours = raw_hours if raw_hours else "Hours unverified; confirm with facility before visiting"
+                        operating_hours = (
+                            raw_hours
+                            if raw_hours
+                            else "Hours unverified; confirm with facility before visiting"
+                        )
                         if name:
                             live_results.append(
                                 {

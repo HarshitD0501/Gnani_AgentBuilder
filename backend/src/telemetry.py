@@ -42,35 +42,66 @@ class TurnMetrics:
     def stt_delay_ms(self) -> float | None:
         """Time from user speech end to final transcript receipt."""
         if self.transcript_received_at and self.user_speech_stopped_at:
-            return round(max(0.0, (self.transcript_received_at - self.user_speech_stopped_at) * 1000.0), 2)
+            return round(
+                max(
+                    0.0,
+                    (self.transcript_received_at - self.user_speech_stopped_at)
+                    * 1000.0,
+                ),
+                2,
+            )
         return None
 
     @property
     def decision_delay_ms(self) -> float | None:
         """Time spent in deterministic safety & boundary triage."""
         if self.decision_completed_at and self.transcript_received_at:
-            return round(max(0.0, (self.decision_completed_at - self.transcript_received_at) * 1000.0), 2)
+            return round(
+                max(
+                    0.0,
+                    (self.decision_completed_at - self.transcript_received_at) * 1000.0,
+                ),
+                2,
+            )
         return None
 
     @property
     def ttft_ms(self) -> float | None:
         """Time to First Token (TTFT) from transcript receipt."""
         if self.llm_first_token_at and self.transcript_received_at:
-            return round(max(0.0, (self.llm_first_token_at - self.transcript_received_at) * 1000.0), 2)
+            return round(
+                max(
+                    0.0,
+                    (self.llm_first_token_at - self.transcript_received_at) * 1000.0,
+                ),
+                2,
+            )
         return None
 
     @property
     def ttfa_ms(self) -> float | None:
         """Time to First Audio (TTFA) from transcript receipt."""
         if self.tts_first_chunk_at and self.transcript_received_at:
-            return round(max(0.0, (self.tts_first_chunk_at - self.transcript_received_at) * 1000.0), 2)
+            return round(
+                max(
+                    0.0,
+                    (self.tts_first_chunk_at - self.transcript_received_at) * 1000.0,
+                ),
+                2,
+            )
         return None
 
     @property
     def total_turn_latency_ms(self) -> float | None:
         """End-to-end voice latency from speech end to first audio response."""
         if self.tts_first_chunk_at and self.user_speech_stopped_at:
-            return round(max(0.0, (self.tts_first_chunk_at - self.user_speech_stopped_at) * 1000.0), 2)
+            return round(
+                max(
+                    0.0,
+                    (self.tts_first_chunk_at - self.user_speech_stopped_at) * 1000.0,
+                ),
+                2,
+            )
         return None
 
     def to_dict(self) -> dict[str, Any]:
@@ -78,11 +109,17 @@ class TurnMetrics:
             "turn_id": self.turn_id,
             "session_id": self.session_id,
             "created_at": self.created_at,
-            "stt_delay_ms": round(self.stt_delay_ms, 2) if self.stt_delay_ms is not None else None,
-            "decision_delay_ms": round(self.decision_delay_ms, 2) if self.decision_delay_ms is not None else None,
+            "stt_delay_ms": round(self.stt_delay_ms, 2)
+            if self.stt_delay_ms is not None
+            else None,
+            "decision_delay_ms": round(self.decision_delay_ms, 2)
+            if self.decision_delay_ms is not None
+            else None,
             "ttft_ms": round(self.ttft_ms, 2) if self.ttft_ms is not None else None,
             "ttfa_ms": round(self.ttfa_ms, 2) if self.ttfa_ms is not None else None,
-            "total_turn_latency_ms": round(self.total_turn_latency_ms, 2) if self.total_turn_latency_ms is not None else None,
+            "total_turn_latency_ms": round(self.total_turn_latency_ms, 2)
+            if self.total_turn_latency_ms is not None
+            else None,
             "is_emergency": self.is_emergency,
             "is_boundary": self.is_boundary,
             "is_short_circuit": self.is_short_circuit,
@@ -93,7 +130,9 @@ class PipelineTelemetryTracker:
     """Thread-safe, bounded rolling tracker for pipeline turn metrics."""
 
     def __init__(self, max_history: int = 200) -> None:
-        self._history: collections.deque[TurnMetrics] = collections.deque(maxlen=max_history)
+        self._history: collections.deque[TurnMetrics] = collections.deque(
+            maxlen=max_history
+        )
         self._active_turns: dict[str, TurnMetrics] = {}
 
     def start_turn(self, turn_id: str, session_id: str = "default") -> TurnMetrics:
@@ -132,7 +171,9 @@ class PipelineTelemetryTracker:
             }
 
         ttfa_values = [t.ttfa_ms for t in turns if t.ttfa_ms is not None]
-        decision_values = [t.decision_delay_ms for t in turns if t.decision_delay_ms is not None]
+        decision_values = [
+            t.decision_delay_ms for t in turns if t.decision_delay_ms is not None
+        ]
 
         def _percentile(data: list[float], p: float) -> float:
             if not data:
@@ -151,8 +192,12 @@ class PipelineTelemetryTracker:
             "p50_ttfa_ms": _percentile(ttfa_values, 50),
             "p90_ttfa_ms": _percentile(ttfa_values, 90),
             "p95_ttfa_ms": _percentile(ttfa_values, 95),
-            "mean_ttfa_ms": round(statistics.mean(ttfa_values), 2) if ttfa_values else 0.0,
-            "mean_decision_delay_ms": round(statistics.mean(decision_values), 2) if decision_values else 0.0,
+            "mean_ttfa_ms": round(statistics.mean(ttfa_values), 2)
+            if ttfa_values
+            else 0.0,
+            "mean_decision_delay_ms": round(statistics.mean(decision_values), 2)
+            if decision_values
+            else 0.0,
             "emergency_turns": sum(1 for t in turns if t.is_emergency),
             "short_circuit_turns": sum(1 for t in turns if t.is_short_circuit),
         }

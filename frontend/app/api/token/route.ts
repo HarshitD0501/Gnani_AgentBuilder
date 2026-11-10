@@ -67,10 +67,9 @@ export async function POST(req: Request) {
     });
     return NextResponse.json(data, { headers });
   } catch (error) {
-    if (error instanceof Error) {
-      console.error(error);
-      return new NextResponse(error.message, { status: 500 });
-    }
+    const message = error instanceof Error ? error.message : 'Internal Server Error';
+    console.error('[token-route] Failed to generate participant token:', error);
+    return new NextResponse(message, { status: 500 });
   }
 }
 
