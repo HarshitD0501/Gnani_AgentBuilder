@@ -45,6 +45,7 @@ export default async function RootLayout({ children }: RootLayoutProps) {
     <html
       lang="en"
       className={cn(commitMono.variable, 'scroll-smooth font-sans antialiased')}
+      suppressHydrationWarning
     >
       <head>
         {styles ? <style>{styles}</style> : null}
@@ -52,7 +53,9 @@ export default async function RootLayout({ children }: RootLayoutProps) {
         <meta name="description" content={pageDescription} />
         <meta name="theme-color" content="#f8f9fd" />
       </head>
-      <body className="overflow-x-hidden">{children}</body>
+      <body className="overflow-x-hidden" suppressHydrationWarning>
+        {children}
+      </body>
     </html>
   );
 }
