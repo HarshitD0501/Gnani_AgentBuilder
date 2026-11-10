@@ -190,20 +190,37 @@ export function AgentSessionView_01({
     if (session.isConnected) wasConnectedRef.current = true;
   }, [session.isConnected]);
 
-  type StatusLabel = 'Ready' | 'Connecting' | 'Listening' | 'Speaking' | 'Call ended';
+  type StatusLabel =
+    | 'Ready'
+    | 'Connecting'
+    | 'Reconnecting'
+    | 'Listening'
+    | 'Thinking'
+    | 'Speaking'
+    | 'Unavailable'
+    | 'Call ended';
+
+  const roomState = session.room?.state;
+
   const statusLabel: StatusLabel = (() => {
+    if (roomState === 'reconnecting') return 'Reconnecting';
     if (!session.isConnected && wasConnectedRef.current) return 'Call ended';
-    if (isConnecting) return 'Connecting';
-    if (agentState === 'speaking' || agentState === 'thinking') return 'Speaking';
+    if (isConnecting || roomState === 'connecting') return 'Connecting';
+    if (agentState === 'thinking') return 'Thinking';
+    if (agentState === 'speaking') return 'Speaking';
     if (agentState === 'listening') return 'Listening';
-    return 'Ready';
+    if (session.isConnected) return 'Ready';
+    return 'Unavailable';
   })();
 
   const statusDotClass: Record<StatusLabel, string> = {
     Ready: 'bg-emerald-500',
     Connecting: 'bg-amber-400 animate-pulse',
+    Reconnecting: 'bg-amber-500 animate-pulse',
     Listening: 'bg-blue-500 animate-pulse',
+    Thinking: 'bg-cyan-400 animate-pulse',
     Speaking: 'bg-violet-500 animate-pulse',
+    Unavailable: 'bg-rose-500',
     'Call ended': 'bg-slate-400',
   };
 
@@ -230,6 +247,23 @@ export function AgentSessionView_01({
       className={cn('bg-background relative z-10 h-full w-full overflow-hidden', className)}
       {...props}
     >
+      {/* Top persistent header: Brand + Emergency Hotline */}
+      <div className="absolute inset-x-4 top-4 z-40 flex items-center justify-between pointer-events-none md:inset-x-8">
+        <div className="pointer-events-auto flex items-center gap-2.5 rounded-full bg-black/40 px-3.5 py-1.5 backdrop-blur-md border border-white/10">
+          <span className="size-2 rounded-full bg-violet-400" />
+          <span className="text-xs font-semibold tracking-wide text-white/90">Sahayika</span>
+          <span className="text-[10px] text-white/50 border-l border-white/20 pl-2">Gnani AI</span>
+        </div>
+        <a
+          href="tel:112"
+          className="pointer-events-auto inline-flex items-center gap-2 rounded-full border border-rose-500/40 bg-rose-950/70 px-3.5 py-1.5 text-xs font-semibold text-rose-200 shadow-md backdrop-blur-md transition-all hover:bg-rose-900/80 focus-visible:outline-2 focus-visible:outline-rose-500"
+          title="Emergency Response Support System (112 India)"
+        >
+          <span className="size-2 rounded-full bg-rose-500 animate-pulse" />
+          Emergency: 112
+        </a>
+      </div>
+
       <Fade top className="absolute inset-x-4 top-0 z-10 h-40" />
       {/* transcript */}
 

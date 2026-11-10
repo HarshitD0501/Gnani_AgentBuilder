@@ -176,10 +176,10 @@ export default function AnalyticsPage() {
           <Link
             href="/"
             className="group flex items-center gap-3 rounded-xl focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-violet-600"
-            aria-label="Aanya home"
+            aria-label="Sahayika home"
           >
             <BrandMark className="transition-transform duration-300 group-hover:scale-105 group-hover:-rotate-3" />
-            <span className="text-xl font-bold tracking-[-0.03em] text-[#111a2e]">Aanya</span>
+            <span className="text-xl font-bold tracking-[-0.03em] text-[#111a2e]">Sahayika</span>
           </Link>
 
           <nav aria-label="Dashboard navigation" className="flex items-center gap-3 sm:gap-6">
@@ -193,7 +193,7 @@ export default function AnalyticsPage() {
               href="/"
               className="aanya-primary-button h-11 rounded-full px-5 text-sm font-semibold"
             >
-              Back to Aanya
+              Back to Sahayika
             </Link>
           </nav>
         </div>
@@ -430,9 +430,9 @@ export default function AnalyticsPage() {
       <footer className="px-5 py-9 sm:px-8 lg:px-10">
         <div className="mx-auto flex max-w-[1240px] flex-col gap-4 border-t border-slate-200 pt-8 text-sm text-slate-500 md:flex-row md:items-center md:justify-between">
           <p className="max-w-xl leading-6">
-            Aanya provides general health information, not medical diagnosis or emergency care.
+            Sahayika provides general health information, not medical diagnosis or emergency care.
           </p>
-          <p>Murf Falcon + LiveKit · © 2026 Aanya</p>
+          <p>Gnani AI (Prisma & Timbre) + LiveKit · © 2026 Sahayika</p>
         </div>
       </footer>
     </div>

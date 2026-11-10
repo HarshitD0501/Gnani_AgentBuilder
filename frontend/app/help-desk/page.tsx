@@ -167,7 +167,7 @@ export default async function HelpDeskPage({ searchParams }: HelpDeskPageProps) 
         <header className="space-y-2">
           <h1 className="text-2xl font-semibold">Human help desk</h1>
           <p className="text-muted-foreground text-sm">
-            Cases where Aanya stopped and asked a human to take over — a red-flag symptom, or a
+            Cases where Sahayika stopped and asked a human to take over — a red-flag symptom, or a
             request for a diagnosis, a medicine or a report reading. Every caller here agreed to
             share these details.
           </p>

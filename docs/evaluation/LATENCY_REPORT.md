@@ -84,3 +84,4 @@ Measurements taken with free/community endpoints across synthetic turns in Engli
 - **Connection Pool Boundedness:** SQLite connections are opened per request/thread and closed immediately upon completion (`with conn:`).
 - **Session Cleanup:** On session close, active speech is interrupted, background disconnection tasks execute within bounded timeouts (2.5s), and room connections close cleanly without lingering leaks.
 - **Queue Limits:** Rolling telemetry metrics are bounded to 200 items in memory (`collections.deque(maxlen=200)`), ensuring zero memory leaks over long-running daemon execution.
+
