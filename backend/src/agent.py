@@ -20,10 +20,9 @@ from livekit.agents import (
     cli,
     function_tool,
     room_io,
-    tokenize,
 )
 from livekit.agents.worker import ServerEnvOption
-from livekit.plugins import deepgram, google, murf, noise_cancellation, silero
+from livekit.plugins import google, noise_cancellation, silero
 from livekit.plugins.turn_detector.multilingual import MultilingualModel
 
 import appointments
@@ -31,6 +30,10 @@ import db
 import escalations
 import health_services
 import reminders
+from voice_providers import (
+    build_gnani_stt,
+    build_gnani_tts,
+)
 
 logger = logging.getLogger("agent")
 
@@ -60,7 +63,7 @@ load_dotenv(".env.local")
 GEMINI_MODEL = os.getenv("GEMINI_MODEL", "gemini-3.5-flash-lite")
 
 SYSTEM_PROMPT = """IDENTITY
-You are Aanya, a warm and knowledgeable health advisor. You work independently to help everyday users understand their health better — you are not affiliated with any hospital or clinic.
+You are Sahayika, a warm, caring, and knowledgeable multilingual health companion. You speak in a natural, empathetic, and reassuring tone. You work independently to help everyday users understand their health better — you are not affiliated with any hospital or clinic.
 
 OBJECTIVES
 Every call has three goals: first, understand the user's concern clearly before responding — if it is vague, ask one focused clarifying question. Second, give actionable and accurate health information in plain language. Third, maintain honest boundaries — always tell the user when something is outside your scope or when they need to see a doctor.
@@ -83,7 +86,7 @@ STRICT NAME USAGE RULE (ALL CONVERSATIONS):
 MEMORY, TOOLS & CONSENT
 - You have tools to remember returning callers: `lookup_caller`, `save_caller_memory`, and `forget_caller`.
 - When a caller introduces themselves or gives their name (e.g. "My name is Ramesh" / "मेरा नाम रमेश है"), call `lookup_caller(user_id_or_name)` to see if you have saved facts from a previous call.
-- RETURNING CALLER GREETING: Match user's language! If English: "Hello Ramesh! Welcome back to Aanya Health Advisor. Last time you mentioned a headache, how are you feeling today?". If Hindi: "नमस्ते रमेश जी! पिछली बार आपको सिरदर्द की शिकायत थी, अब आपकी तबियत कैसी है?".
+- RETURNING CALLER GREETING: Match user's language! If English: "Hello Ramesh! Welcome back to Sahayika Health Companion. Last time you mentioned a headache, how are you feeling today?". If Hindi: "नमस्ते रमेश जी! पिछली बार आपको सिरदर्द की शिकायत थी, अब आपकी तबियत कैसी है?".
 - WHEN USER SAYS THANK YOU / THANKS / धन्यवाद: Match user's language! If English: "You're welcome! May I know your name and permission so I can remember your health details for our next conversation?". If Hindi: "आपका स्वागत है! क्या मैं आपका शुभ नाम और अनुमति जान सकती हूँ ताकि अगली बातचीत के लिए आपकी जानकारी याद रख सकूँ?".
 - IF CALLER NAME IS UNKNOWN: Answer their health concern in their spoken language first. When the user says thank you or near the end of triage, ask politely in their language for their name and permission.
 - HARD RULE (HEALTH ACCESS CONSENT): Before calling `save_caller_memory`, you MUST ALWAYS ask explicit permission from the caller first in their language.
@@ -515,7 +518,7 @@ def build_outbound_opening(call_info: dict) -> str:
 
     if language == "English":
         opening = (
-            f"Hello {name}, this is Aanya calling from your health reminder service. "
+            f"Hello {name}, this is Sahayika calling from your health reminder service. "
             f"You had set a reminder for {medicine}"
         )
         if when:
@@ -1262,28 +1265,17 @@ server.setup_fnc = prewarm
 
 
 def build_session(ctx: JobContext, userdata: dict) -> AgentSession:
-    """The Day 5 voice pipeline. Shared by the inbound and outbound paths so the
-    two can never drift apart."""
+    """The genuine Gnani voice pipeline using Prisma STT and Timbre TTS.
+    Shared by inbound and outbound paths so the two can never drift apart."""
     return AgentSession(
-        stt=deepgram.STT(model="nova-3", language="multi"),
+        stt=build_gnani_stt(),
         llm=google.LLM(
-            # No thinking_config on purpose. The plugin refuses thinking_budget on
-            # the Gemini 3 line ("Ignoring thinking_budget. Use thinking_level"),
-            # and measured through the plugin with this exact SYSTEM_PROMPT,
-            # thinking_level="low" made flash-lite *slower* than its own default
-            # (2.55s vs 1.45s first token) — "low" is a smaller reasoning pass,
-            # not no reasoning pass. Defaults are the fastest thing available.
             model=GEMINI_MODEL,
         ),
-        tts=murf.TTS(
-            voice="Anisha",
-            style="Conversation",
-            tokenizer=tokenize.basic.SentenceTokenizer(min_sentence_len=2),
-            text_pacing=True,
-        ),
+        tts=build_gnani_tts(),
         turn_detection=MultilingualModel(),
         vad=ctx.proc.userdata["vad"],
-        preemptive_generation=True,
+        preemptive_generation=False,
         userdata=userdata,
     )
 
@@ -1877,27 +1869,27 @@ async def my_agent(ctx: JobContext):
         if lang == "English":
             if ongoing:
                 greeting_msg = (
-                    f"Hello {name}! Welcome back to Aanya Health Advisor. "
+                    f"Hello {name}! Welcome back to Sahayika Health Companion. "
                     f"Last time you mentioned experiencing {ongoing}. How are you feeling today?"
                 )
             else:
                 greeting_msg = (
-                    f"Hello {name}! Welcome back to Aanya Health Advisor. "
+                    f"Hello {name}! Welcome back to Sahayika Health Companion. "
                     f"How can I help you today?"
                 )
         else:
             if ongoing:
                 greeting_msg = (
-                    f"नमस्ते {name} जी! आन्या हेल्थ एडवाइजर में आपका फिर से स्वागत है। "
+                    f"नमस्ते {name} जी! सहायिका में आपका फिर से स्वागत है। "
                     f"पिछली बार आपको {ongoing} की शिकायत थी। अब आपकी तबियत कैसी है?"
                 )
             else:
                 greeting_msg = (
-                    f"नमस्ते {name} जी! आन्या हेल्थ एडवाइजर में आपका फिर से स्वागत है। "
+                    f"नमस्ते {name} जी! सहायिका में आपका फिर से स्वागत है। "
                     f"आज आपकी क्या सहायता कर सकती हूँ?"
                 )
     else:
-        greeting_msg = "नमस्ते! मैं आन्या हूँ, आपकी हेल्थ एडवाइजर। आज आपकी क्या सहायता कर सकती हूँ?"
+        greeting_msg = "नमस्ते! मैं सहायिका हूँ, आपकी हेल्थ साथी। आज आपकी क्या सहायता कर सकती हूँ?"
 
     await session.start(
         agent=assistant,
